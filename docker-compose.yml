@@ -2,20 +2,48 @@ version: "3.9"
 
 services:
   domomir:
+    depends_on:
+      - db
+      - redis
     image: domomir_v2
     build: .
     ports:
       - "8080:8000"
+    environment:
+      - DATABASE_URL=postgresql+psycopg://domomir@db:5432/domomir?password=pass
 
   celery-worker:
+    depends_on:
+      - db
+      - redis
     image: domomir_v2 
     command: celery-worker 
+    environment:
+      - DATABASE_URL=postgresql+psycopg://domomir@db:5432/domomir?password=pass
 
   celery-beat:
+    depends_on:
+      - db
+      - redis
     image: domomir_v2
     command: celery-beat
+    environment:
+      - DATABASE_URL=postgresql+psycopg://domomir@db:5432/domomir?password=pass
+  db:
+    image: postgres
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_USER=domomir
+      - POSTGRES_DB=domomir
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    expose: ["5432"]
 
   redis:
     image: redis:latest
     expose: ["6379"]
 
+
+volumes:
+  pg_data:

@@ -1,6 +1,6 @@
 from datetime import date
 
-from celery_app import app
+from celery import shared_task
 from database import engine
 from database.tasks import models
 from integrations.wastes import schedule
@@ -18,7 +18,7 @@ def _check_schedule_and_create_task(db: Session, schedule: dict, task_name: str)
         tasks_service.create_task(db, models.TaskCreate(name=task_name))
 
 
-@app.task
+@shared_task
 def create_task_to_prepare_wastes():
     with Session(engine) as db:
         _check_schedule_and_create_task(

@@ -6,7 +6,7 @@ from sqlmodel import Session, col, select
 
 
 def get_list(db: Session) -> Sequence[Task]:
-    stmt = select(Task).order_by(col(Task.completed), col(Task.id))
+    stmt = select(Task).order_by(col(Task.completed).desc(), col(Task.id))
     return db.exec(stmt).all()
 
 

@@ -5,6 +5,7 @@ httpx
 humanize
 jinja2
 paho-mqtt
+psycopg[binary]
 pydantic-settings
 python-multipart
 sqlmodel

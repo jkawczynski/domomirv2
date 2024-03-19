@@ -19,8 +19,16 @@ class Task(SQLModel, table=True):
     name: str
     completed: datetime | None = None
     task_date: date
-    schedule_id: int | None = Field(default=None, foreign_key="schedule.id")
-    assigned_to_id: int | None = Field(default=None, foreign_key="user.id")
+    schedule_id: int | None = Field(
+        default=None,
+        foreign_key="schedule.id",
+        nullable=True,
+    )
+    assigned_to_id: int | None = Field(
+        default=None,
+        foreign_key="user.id",
+        nullable=True,
+    )
 
     schedule: Optional["Schedule"] = Relationship(back_populates="tasks")
     assigned_to: Optional["User"] = Relationship(back_populates="tasks")

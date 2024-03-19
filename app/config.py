@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,3 +24,9 @@ class Settings(BaseSettings):
 
     mqtt: MqttSettings = MqttSettings()
     celery: CelerySettings = CelerySettings()
+    database_url: str = "sqlite:///db.sqlite"
+
+
+@lru_cache
+def get_settings():
+    return Settings()

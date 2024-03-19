@@ -1,7 +1,7 @@
 import logging
 from datetime import date
 
-from celery_app import app
+from celery import shared_task
 from database import engine
 from database.schedules import crud as schedules_crud
 from database.tasks import crud, models
@@ -10,7 +10,7 @@ from sqlmodel import Session
 logger = logging.getLogger(__name__)
 
 
-@app.task()
+@shared_task
 def create_tasks_for_today():
     with Session(engine) as db:
         unfinished_tasks = crud.get_unfinished(db)
@@ -36,7 +36,7 @@ def create_tasks_for_today():
         crud.persist_all(db, tasks)
 
 
-@app.task()
+@shared_task
 def clean_finished_tasks_and_schedules():
     with Session(engine) as db:
         crud.remove_all_finished(db)

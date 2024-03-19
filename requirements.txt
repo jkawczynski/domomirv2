@@ -65,6 +65,9 @@ mdurl==0.1.2
 paho-mqtt==2.0.0
 prompt-toolkit==3.0.43
     # via click-repl
+psycopg==3.1.18
+psycopg-binary==3.1.18
+    # via psycopg
 pydantic==2.6.4
     # via
     #   fastapi
@@ -105,6 +108,7 @@ typing-extensions==4.10.0
     # via
     #   anyio
     #   fastapi
+    #   psycopg
     #   pydantic
     #   pydantic-core
     #   sqlalchemy

@@ -1,10 +1,13 @@
+from config import get_settings
 from sqlmodel import Session, SQLModel, create_engine
 
 from .schedules import models  # noqa E501
 from .tasks import models  # noqa E501
 from .users import models  # noqa E501
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///db.sqlite"
+settings = get_settings()
+
+SQLALCHEMY_DATABASE_URL = get_settings().database_url
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

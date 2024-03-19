@@ -44,8 +44,8 @@ def remove(db: Session, schedule: Schedule):
 def remove_all_finished(db: Session):
     today = date.today()
     subquery = (
-        select(Task.id)
-        .where(col(Task.completed).is_not(None))
+        select(Task.schedule_id)
+        .where(col(Task.completed).is_(None))
         .where(col(Task.schedule_id).is_not(None))
         .scalar_subquery()
     )
