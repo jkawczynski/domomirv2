@@ -1,0 +1,63 @@
+.completed-list-item {
+  text-decoration: line-through;
+  color: darkgray;
+}
+.overdue-task {
+  color: #ff6700;
+}
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 500ms ease-in;
+}
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+.button-small {
+  padding: 6px, 16px, 6px, 16px;
+}
+.list-item {
+  display: flex;
+}
+.list-item-undo {
+  cursor: pointer;
+  padding-right: 10px;
+}
+.list-item-left-action {
+  margin-top: 10px;
+  padding-right: 10px;
+}
+.list-item-right-action {
+  margin-left: auto;
+
+  & img {
+    margin-top: 10px;
+    width: 24px;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 768px) {
+  .recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 0px;
+  }
+
+  .menu-item-name {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 0px;
+  }
+}
+

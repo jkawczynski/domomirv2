@@ -1,0 +1,26 @@
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Scheduled for</th>
+      <th scope="col">Frequency</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for schedule in schedules %}
+    <tr>
+      <th scope="row">
+        <a 
+          href="/schedules/{{ schedule.id }}"
+          hx-get="/schedules/{{ schedule.id }}"
+          hx-target="#content-container"
+          hx-swap="innerHTML"
+          hx-indicator="#loading"
+          hx-push-url="/schedules/{{ schedule.id }}"
+        /> {{ schedule.name }}</a>
+      </th>
+      <td>{{ schedule.day }}</td>
+      <td>{% if schedule.frequency_in_days %} Every {{ schedule.frequency_in_days }} days {% else %} - {% endif %}</td>
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,21 @@
+version: "3.9"
+
+services:
+  domomir:
+    image: domomir_v2
+    build: .
+    ports:
+      - "8080:8000"
+
+  celery-worker:
+    image: domomir_v2 
+    command: celery-worker 
+
+  celery-beat:
+    image: domomir_v2
+    command: celery-beat
+
+  redis:
+    image: redis:latest
+    expose: ["6379"]
+

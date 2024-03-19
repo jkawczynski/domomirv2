@@ -1,0 +1,22 @@
+# Assume Python 3.12
+target-version = "py312"
+
+[lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+]
+
+ignore = ["B008"]
+
+ignore-init-module-imports = true

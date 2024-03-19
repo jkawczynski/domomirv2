@@ -1,0 +1,60 @@
+{% if errors._FORM %}
+<article class="pico-background-red-400">
+  {{ errors._FORM }}
+</article>
+{% endif %}
+<fieldset>
+  <label>
+    Task name
+    <input
+      name="name"
+      placeholder="eg. Clean bathroom"
+      {% if errors.name %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% if schedule.name %} value="{{ schedule.name }}" {% endif %}
+    />
+    {% if errors.name %}
+    <small id="invalid-helper">
+      {{ errors.name  }}
+    </small>
+    {% endif %}
+  </label>
+  <label>
+    Start day
+    <input
+      name="schedule_date"
+      type="date"
+      {% if errors.schedule_date %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% if schedule.schedule_date %} value="{{ schedule.schedule_date }}" {% endif %}
+    />
+    {% if errors.schedule_date %}
+    <small id="invalid-helper">
+      {{ errors.schedule_date }}
+    </small>
+    {% endif %}
+  </label>
+  <label>
+    Repeat every X days
+    <input
+      placeholder="optional"
+      name="frequency_in_days"
+      type="number"
+      min="0"
+      {% if errors.frequency_in_days %}
+      aria-invalid="true"
+      aria-describedby="invalid-helper"
+      {% endif %}
+      {% if schedule.frequency_in_days %} value="{{ schedule.frequency_in_days }}" {% endif %}
+    />
+    {% if errors.frequency_in_days %}
+    <small id="invalid-helper">
+      {{ errors.frequency_in_days  }}
+    </small>
+    {% endif %}
+  </label>
+</fieldset>

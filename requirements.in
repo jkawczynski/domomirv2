@@ -1,0 +1,13 @@
+celery
+python-dateutil
+fastapi
+httpx
+humanize
+jinja2
+paho-mqtt
+pydantic-settings
+python-multipart
+sqlmodel
+redis
+typer[all]
+uvicorn[standard]

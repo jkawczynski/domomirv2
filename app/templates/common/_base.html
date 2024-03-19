@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/pico.fuchsia.min.css') }}"
+      defer
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/pico.colors.min.css') }}"
+      defer
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/app.css') }}"
+      defer
+    />
+    <script src="{{ url_for('static', path='js/htmx.min.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/json-enc.js') }}" defer></script>
+    <script src="{{ url_for('static', path='js/_hyperscript.min.js') }}" defer></script>
+    <title>Domomir</title>
+  </head>
+  <body class="container" hx-ext="json-enc">
+      {% block nav %}
+      <nav>
+        <ul class="brand">
+          <li><strong>Domomir</strong></li>
+        </ul>
+        <ul class="menu">
+          <li class="item">
+            <a
+              href="/cat"
+              hx-get="/cat"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >🐈</a
+            >
+          </li>
+          <li class="item">
+            <a
+              href="/"
+              hx-get="/"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >✅ <span class="menu-item-name">Daily tasks</span></a
+            >
+          </li>
+          <li class="item">
+            <a
+              href="/schedules"
+              hx-get="/schedules"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >🗓 <span class="menu-item-name">Schedules</span></a
+            >
+          </li>
+          <li class="item">
+            <a
+              href="/shopping-list"
+              hx-get="/shopping-list"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >🛒 <span class="menu-item-name">Shopping List</span></a
+            >
+          </li>
+          <li class="item">
+            <a
+              href="/recipes"
+              hx-get="/recipes"
+              hx-target="#content-container"
+              hx-swap="innerHTML"
+              hx-indicator="#loading"
+              hx-push-url="true"
+              >🍲 <span class="menu-item-name">Recipes</span></a
+            >
+          </li>
+        </ul>
+      </nav>
+      <progress id="loading" class="htmx-indicator"></progress>
+      {% endblock %}
+    <main>
+      <div id="content-container">
+      {% block content %} 
+      {% endblock %}
+      </div>
+    </main>
+  </body>
+</html>

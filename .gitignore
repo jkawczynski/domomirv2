@@ -1,0 +1,20 @@
+*.log
+*.pot
+*.pyc
+__pycache__/
+celerybeat-schedule
+local_settings.py
+.pytest_cache
+db.sqlite
+db.sqlite3
+db.sqlite3-journal
+
+app/import_data.py
+
+# Environments
+.venv
+.env
+
+# ruff
+.ruff_cache/
+
