@@ -3,11 +3,8 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class CelerySettings(BaseSettings):
-    broker_url: str = "redis://redis:6379"
-    result_backend_url: str = "redis://redis:6379"
-    enable_utc: bool = True
-    timezone: str = "Europe/Warsaw"
+class TaskiqSettings(BaseSettings):
+    broker_url: str = "redis://localhost:6379"
 
 
 class MqttSettings(BaseSettings):
@@ -23,8 +20,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_nested_delimiter="__")
 
     mqtt: MqttSettings = MqttSettings()
-    celery: CelerySettings = CelerySettings()
-    database_url: str = "sqlite:///db.sqlite"
+    taskiq: TaskiqSettings = TaskiqSettings()
+    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/domomir"
+    echo_db: bool = False
 
 
 @lru_cache

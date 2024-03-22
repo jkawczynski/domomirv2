@@ -10,25 +10,28 @@ services:
     ports:
       - "8080:8000"
     environment:
-      - DATABASE_URL=postgresql+psycopg://domomir@db:5432/domomir?password=pass
+      - DATABASE_URL=postgresql+asyncpg://domomir@db:5432/domomir?password=pass
+      - TASKIQ__BROKER_URL=redis://redis:6379
 
-  celery-worker:
+  worker:
     depends_on:
       - db
       - redis
     image: domomir_v2 
-    command: celery-worker 
+    command: worker
     environment:
-      - DATABASE_URL=postgresql+psycopg://domomir@db:5432/domomir?password=pass
+      - DATABASE_URL=postgresql+asyncpg://domomir@db:5432/domomir?password=pass
+      - TASKIQ__BROKER_URL=redis://redis:6379
 
-  celery-beat:
+  scheduler:
     depends_on:
       - db
       - redis
     image: domomir_v2
-    command: celery-beat
+    command: scheduler
     environment:
-      - DATABASE_URL=postgresql+psycopg://domomir@db:5432/domomir?password=pass
+      - DATABASE_URL=postgresql+asyncpg://domomir@db:5432/domomir?password=pass
+      - TASKIQ__BROKER_URL=redis://redis:6379
   db:
     image: postgres
     shm_size: 128mb

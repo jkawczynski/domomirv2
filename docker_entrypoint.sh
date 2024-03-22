@@ -2,11 +2,11 @@
 source .venv/bin/activate
 cd /code/app
 
-if [[ "$1" == "celery-worker" ]]; then
-    celery -A main.celery worker  -l INFO
-elif [[ "$1" == "celery-beat" ]]; then
-    celery -A main.celery beat -l INFO
+if [[ "$1" == "worker" ]]; then
+    taskiq worker tkq:broker -fsd
+elif [[ "$1" == "scheduler" ]]; then
+    taskiq scheduler tkq:scheduler -fsd
 else
-    python manage.py create-db
+    alembic upgrade head
     uvicorn main:app --host 0.0.0.0 --port 8000
 fi

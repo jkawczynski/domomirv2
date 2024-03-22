@@ -5,39 +5,39 @@ from database.tasks import crud, models
 from database.users import crud as users_crud
 from fastapi import HTTPException
 from integrations.mqtt.tasks import send_mqtt_task_assigned
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 
-def create_task(db: Session, task: models.TaskCreate) -> None:
+async def create_task(session: AsyncSession, task: models.TaskCreate) -> None:
     db_task = models.Task.model_validate(task)
-    crud.persist(db, db_task)
+    await crud.persist(session, db_task)
 
 
-def assign_task(db: Session, task_id: int, user_id: int) -> None:
-    task = crud.get_by_id(db, task_id)
+async def assign_task(session: AsyncSession, task_id: int, user_id: int) -> None:
+    task = await crud.get_by_id(session, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
 
-    user = users_crud.get_by_id(db, user_id)
+    user = await users_crud.get_by_id(session, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     task.assigned_to = user
-    crud.persist(db, task)
-    send_mqtt_task_assigned.delay(task.id)
+    await crud.persist(session, task)
+    await send_mqtt_task_assigned.kiq(task.id)
 
 
-def undo_complete_task(db: Session, task_id: int) -> None:
-    task = crud.get_by_id(db, task_id)
+async def undo_complete_task(session: AsyncSession, task_id: int) -> None:
+    task = await crud.get_by_id(session, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
 
     task.completed = None
-    crud.persist(db, task)
+    await crud.persist(session, task)
 
 
-def complete_task(db: Session, task_id: int) -> None:
-    task = crud.get_by_id(db, task_id)
+async def complete_task(session: AsyncSession, task_id: int) -> None:
+    task = await crud.get_by_id(session, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
 
@@ -45,12 +45,14 @@ def complete_task(db: Session, task_id: int) -> None:
         return
 
     task.completed = datetime.now()
-    crud.persist(db, task)
+    await crud.persist(session, task)
 
-    if task.schedule_id and (schedule := schedule_crud.get_by_id(db, task.schedule_id)):
+    if task.schedule_id and (
+        schedule := await schedule_crud.get_by_id(session, task.schedule_id)
+    ):
         frequency_in_days = schedule.frequency_in_days
         if not frequency_in_days:
-            schedule_crud.remove(db, schedule)
+            await schedule_crud.remove(session, schedule)
             return
 
         target_date = schedule.schedule_date
@@ -58,4 +60,4 @@ def complete_task(db: Session, task_id: int) -> None:
             target_date = target_date + timedelta(days=frequency_in_days)
 
         schedule.schedule_date = target_date
-        schedule_crud.persist(db, schedule)
+        await schedule_crud.persist(session, schedule)

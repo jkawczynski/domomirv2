@@ -1,3 +1,7 @@
+anyio
+alembic
+asyncer
+asyncpg
 celery
 python-dateutil
 fastapi
@@ -5,10 +9,12 @@ httpx
 humanize
 jinja2
 paho-mqtt
-psycopg[binary]
 pydantic-settings
 python-multipart
 sqlmodel
 redis
+taskiq
+taskiq-fastapi
+taskiq-redis
 typer[all]
 uvicorn[standard]

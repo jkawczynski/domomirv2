@@ -9,15 +9,15 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from forms import tasks as tasks_forms
 from services import tasks as tasks_service
-from sqlmodel import Session
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 
-def get_tasks_context(db: Session) -> dict:
-    tasks = crud.get_list(db)
-    users = users_crud.get_list(db)
+async def get_tasks_context(session: AsyncSession) -> dict:
+    tasks = await crud.get_list(session)
+    users = await users_crud.get_list(session)
     return {
         "tasks": tasks,
         "users": users,
@@ -27,8 +27,8 @@ def get_tasks_context(db: Session) -> dict:
 
 
 @router.get("/", response_class=HTMLResponse)
-async def get_tasks(request: Request, db: Session = Depends(get_session)):
-    context = get_tasks_context(db)
+async def get_tasks(request: Request, session: AsyncSession = Depends(get_session)):
+    context = await get_tasks_context(session)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -42,11 +42,11 @@ async def get_tasks(request: Request, db: Session = Depends(get_session)):
 async def create_task(
     request: Request,
     form_data: Annotated[dict, Body()],
-    db: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
     form = tasks_forms.TaskForm(form_data)
     if not form.is_valid():
-        context = get_tasks_context(db)
+        context = await get_tasks_context(session)
         context["errors"] = form.form_errors()
         return htmx_utils.template_response(
             request=request,
@@ -57,8 +57,8 @@ async def create_task(
         )
 
     task = form.validated_model
-    tasks_service.create_task(db, task)
-    context = get_tasks_context(db)
+    await tasks_service.create_task(session, task)
+    context = await get_tasks_context(session)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -72,10 +72,10 @@ async def create_task(
 async def complete_task(
     request: Request,
     task_id: int,
-    db: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
-    tasks_service.complete_task(db, task_id)
-    context = get_tasks_context(db)
+    await tasks_service.complete_task(session, task_id)
+    context = await get_tasks_context(session)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -89,10 +89,10 @@ async def complete_task(
 async def undo_complete_task(
     request: Request,
     task_id: int,
-    db: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
-    tasks_service.undo_complete_task(db, task_id)
-    context = get_tasks_context(db)
+    await tasks_service.undo_complete_task(session, task_id)
+    context = await get_tasks_context(session)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -107,10 +107,10 @@ async def assign_task(
     request: Request,
     task_id: int,
     user_id: int,
-    db: Session = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
-    tasks_service.assign_task(db, task_id, user_id)
-    context = get_tasks_context(db)
+    await tasks_service.assign_task(session, task_id, user_id)
+    context = await get_tasks_context(session)
     return htmx_utils.template_response(
         request=request,
         templates=templates,

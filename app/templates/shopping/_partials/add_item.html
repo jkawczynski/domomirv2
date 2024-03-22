@@ -1,0 +1,15 @@
+<div class="grid">
+  <form _="on htmx:afterRequest reset() me">
+    <input name="name" type="text" placeholder="New item" />
+    <button
+      type="submit"
+      hx-post="/shopping/create"
+      hx-indicator="#loading"
+      hx-target=".items-container"
+      hx-swap="outerHTML"
+      hx-disabled-elt="this"
+    >
+      Add
+    </button>
+  </form>
+</div>

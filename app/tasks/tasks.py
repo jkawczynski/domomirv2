@@ -1,43 +1,43 @@
+import asyncio
 import logging
 from datetime import date
 
-from celery import shared_task
-from database import engine
+from database import get_session, session_maker
 from database.schedules import crud as schedules_crud
 from database.tasks import crud, models
-from sqlmodel import Session
+from tkq import DEFAULT_SCHEDULE_ARGS, broker
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task
-def create_tasks_for_today():
-    with Session(engine) as db:
-        unfinished_tasks = crud.get_unfinished(db)
-        today = date.today()
+@broker.task(schedule=[{"cron": "0 2 * * *", **DEFAULT_SCHEDULE_ARGS}])
+async def create_tasks_for_today():
+    session_maker = get_session()
+    session = await anext(session_maker)
 
-        scheduled_tasks = schedules_crud.get_scheduled_for_day(
-            db=db,
-            day=today,
-            exclude_ids=[
-                task.schedule_id for task in unfinished_tasks if task.schedule_id
-            ],
+    unfinished_tasks = await crud.get_unfinished(session)
+    today = date.today()
+
+    scheduled_tasks = await schedules_crud.get_scheduled_for_day(
+        session=session,
+        day=today,
+        exclude_ids=[task.schedule_id for task in unfinished_tasks if task.schedule_id],
+    )
+
+    tasks = [
+        models.Task(
+            name=scheduled_task.name,
+            task_date=today,
+            schedule_id=scheduled_task.id,
         )
+        for scheduled_task in scheduled_tasks
+    ]
 
-        tasks = [
-            models.Task(
-                name=scheduled_task.name,
-                task_date=today,
-                schedule_id=scheduled_task.id,
-            )
-            for scheduled_task in scheduled_tasks
-        ]
-
-        crud.persist_all(db, tasks)
+    await crud.persist_all(session, tasks)
 
 
-@shared_task
-def clean_finished_tasks_and_schedules():
-    with Session(engine) as db:
-        crud.remove_all_finished(db)
-        schedules_crud.remove_all_finished(db)
+@broker.task(schedule=[{"cron": "0 2 * * *", **DEFAULT_SCHEDULE_ARGS}])
+async def clean_finished_tasks_and_schedules():
+    remove_tasks = crud.remove_all_finished(session_maker())
+    remove_schedules = schedules_crud.remove_all_finished(session_maker())
+    asyncio.gather(remove_tasks, remove_schedules)

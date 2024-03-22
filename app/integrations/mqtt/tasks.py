@@ -1,34 +1,43 @@
 import logging
 
-from celery import shared_task
 from config import get_settings
-from database import engine
+from database import get_session
 from database.tasks import crud
 from integrations.mqtt.client import MQTTClient
-from sqlmodel import Session
+from tkq import DEFAULT_SCHEDULE_ARGS, broker
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task
-def send_mqtt_remaining_tasks():
-    with Session(engine) as db:
-        count = crud.get_unfinished_count(db)
+@broker.task(
+    schedule=[
+        {"cron": "0 6 30 * *", **DEFAULT_SCHEDULE_ARGS},
+        {"cron": "0 13 * * *", **DEFAULT_SCHEDULE_ARGS},
+        {"cron": "0 17 * * *", **DEFAULT_SCHEDULE_ARGS},
+        {"cron": "0 21 * * *", **DEFAULT_SCHEDULE_ARGS},
+    ]
+)
+async def send_mqtt_remaining_tasks():
+    session_maker = get_session()
+    session = await anext(session_maker)
 
-        if count:
-            settings = get_settings()
-            client = MQTTClient(settings.mqtt)
-            client.send_remaining_tasks(count)
+    count = await crud.get_unfinished_count(session)
 
-
-@shared_task
-def send_mqtt_task_assigned(task_id: int):
-    with Session(engine) as db:
-        logger.info(f"sending mqtt msg for assigned task, {task_id=}")
-        task = crud.get_by_id(db, task_id)
-        if not task:
-            return
-
+    if count:
         settings = get_settings()
         client = MQTTClient(settings.mqtt)
-        client.send_task_assigned(task)
+        client.send_remaining_tasks(count)
+
+
+@broker.task()
+async def send_mqtt_task_assigned(task_id: int):
+    session_maker = get_session()
+    session = await anext(session_maker)
+    logger.info(f"sending mqtt msg for assigned task, {task_id=}")
+    task = await crud.get_by_id(session, task_id)
+    if not task:
+        return
+
+    settings = get_settings()
+    client = MQTTClient(settings.mqtt)
+    client.send_task_assigned(task)

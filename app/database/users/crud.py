@@ -1,27 +1,31 @@
 from collections.abc import Sequence
 
-from sqlmodel import Session, col, select
+from sqlmodel import col, select
+from sqlmodel.ext.asyncio.session import AsyncSession
 
 from . import models
 
 
-def get_list(db: Session) -> Sequence[models.User]:
+async def get_list(session: AsyncSession) -> Sequence[models.User]:
     stmt = select(models.User).order_by(col(models.User.id).desc())
-    return db.exec(stmt).all()
+    result = await session.exec(stmt)
+    return result.all()
 
 
-def get_by_id(db: Session, user_id: int) -> models.User | None:
+async def get_by_id(session: AsyncSession, user_id: int) -> models.User | None:
     stmt = select(models.User).where(models.User.id == user_id)
-    return db.exec(stmt).first()
+    result = await session.exec(stmt)
+    return result.first()
 
 
-def get_by_name(db: Session, name: str) -> models.User | None:
+async def get_by_name(session: AsyncSession, name: str) -> models.User | None:
     stmt = select(models.User).where(models.User.name == name)
-    return db.exec(stmt).first()
+    result = await session.exec(stmt)
+    return result.first()
 
 
-def persist(db: Session, user: models.User) -> models.User:
-    db.add(user)
-    db.commit()
-    db.refresh(user)
+async def persist(session: AsyncSession, user: models.User) -> models.User:
+    session.add(user)
+    await session.commit()
+    await session.refresh(user)
     return user
