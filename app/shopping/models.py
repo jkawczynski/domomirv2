@@ -12,5 +12,9 @@ class ShoppingListItem(ShoppingListItemBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
 
-class ScheduleCreate(ShoppingListItemBase):
+class ShoppingListItemCreate(ShoppingListItemBase):
     pass
+
+
+class ShoppingListItemEdit(ShoppingListItemBase):
+    name: str | None = Field(default=None, min_length=3, max_length=255)

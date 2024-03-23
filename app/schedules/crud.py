@@ -1,11 +1,12 @@
 from collections.abc import Sequence
 from datetime import date
 
-from database.schedules.models import Schedule
-from database.tasks.models import Task
 from sqlalchemy import delete
 from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from schedules.models import Schedule
+from tasks.models import Task
 
 
 async def get_list(session: AsyncSession) -> Sequence[Schedule]:

@@ -1,9 +1,10 @@
 from typing import Annotated, Generic, TypeVar
 
-from common.errors import parse_errors
 from fastapi import Body
 from pydantic import ValidationError
 from sqlmodel import SQLModel
+
+from common.errors import parse_errors
 
 T = TypeVar("T", bound=SQLModel)
 

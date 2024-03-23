@@ -20,3 +20,17 @@ select = [
 ignore = ["B008"]
 
 ignore-init-module-imports = true
+
+[lint.isort]
+known-first-party = [
+    "tasks",
+    "users", 
+    "schedules", 
+    "recipes",
+    "common",
+    "cat", 
+    "shopping",
+    "integrations",
+    "tkq", 
+    "database"
+]

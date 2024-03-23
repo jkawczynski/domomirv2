@@ -2,11 +2,11 @@ import inspect
 from functools import partial, wraps
 
 import asyncer
-from database import get_session
-from database.users import crud as users_crud
-from database.users import models as users_models
 from rich import print
 from typer import Typer
+
+from database import get_session
+from users import crud, models
 
 
 class AsyncTyper(Typer):
@@ -47,13 +47,13 @@ def print_success(msg: str):
 async def create_user(name: str):
     session_maker = get_session()
     session = await anext(session_maker)
-    user = await users_crud.get_by_name(session, name)
+    user = await crud.get_by_name(session, name)
     if user:
         print_err(f"User with {name=} already exist!")
         return
 
-    user = users_models.User(name=name)
-    await users_crud.persist(session, user)
+    user = models.User(name=name)
+    await crud.persist(session, user)
 
     print_success(f"Created user with {name=}")
 

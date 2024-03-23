@@ -1,9 +1,10 @@
 import logging
 
 from config import get_settings
+
 from database import get_session
-from database.tasks import crud
 from integrations.mqtt.client import MQTTClient
+from tasks import crud
 from tkq import DEFAULT_SCHEDULE_ARGS, broker
 
 logger = logging.getLogger(__name__)

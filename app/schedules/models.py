@@ -6,7 +6,7 @@ from pydantic import field_validator
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:
-    from app.database.tasks.models import Task
+    from tasks.models import Task
 
 
 class ScheduleBase(SQLModel):

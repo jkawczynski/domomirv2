@@ -1,42 +1,36 @@
 <div class="items-container">
-  <div>
-    <ul>
-      {% if items %} {% for item in items %}
-      <input id="item_{{ item.id }}"name="item_id" type="hidden" value="{{ item.id }}" />
-      <li
-        class="list-item"
-      >
-      {% if item.completed %}
-        <img 
-          class="list-item-undo"
-          src="{{ url_for('static', path='svg/refresh-cw.svg') }}"
-          hx-post="/shopping/undo"
-          hx-target=".items-container"
-          hx-swap="outerHTML"
-          hx-include="#item_{{ item.id }}"
-          hx-indicator="#loading"
-          hx-disabled-elt="this"
-        ></img>
-      {% else %}
-        <input
-          type="checkbox"
-          class="todo-checkbox"
-          hx-post="/shopping/complete"
-          hx-target=".items-container"
-          hx-swap="outerHTML"
-          hx-include="#item_{{ item.id }}"
-          hx-indicator="#loading"
-          hx-disabled-elt="this"
-          {% if item.completed %} checked disabled {% endif %}
-        />
-      {% endif %}
-        <span
-          class="{% if item.completed %} completed-list-item {% endif %}"
-        >
-          {{ item.name }}
-        </span>
-      </li>
-      {% endfor %} {% else %} No items :D {% endif %}
-    </ul>
+  <div class="container-fluid">
+    {% if items %} {% for item in items %}
+    <div class="list-item {% if item.completed %} disabled {% endif %}">
+      <div class="list-item-left-action">
+        <form>
+          <input 
+            type="hidden" 
+            value="0"
+            name="completed"
+            {% if not item.completed %} disabled {% endif %}
+          />
+          <input
+            type="checkbox"
+            name="completed"
+            class="todo-checkbox"
+            hx-patch="/shopping/{{ item.id }}"
+            hx-target=".items-container"
+            hx-swap="outerHTML"
+            hx-indicator="#loading"
+            hx-disabled-elt="this"
+            autocomplete="off"
+            value="1"
+            {% if item.completed %} checked {% endif %}
+          />
+        </form>
+      </div>
+       <h6
+         class="shopping-list-item-name {% if item.completed %} completed-list-item {% elif item.is_overdue %} overdue-item {% endif %}"
+       >
+         {{ item.name }}
+       </h6>
+    </div>
+    {% endfor %} {% else %} No tasks for today :D {% endif %}
   </div>
 </div>

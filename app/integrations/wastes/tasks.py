@@ -1,11 +1,11 @@
 import asyncio
 from datetime import date
 
-from database import session_maker
-from database.tasks import models
-from integrations.wastes import schedule
-from services import tasks as tasks_service
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from database import session_maker
+from integrations.wastes import schedule
+from tasks import models, services
 from tkq import DEFAULT_SCHEDULE_ARGS, broker
 
 
@@ -18,7 +18,7 @@ async def _check_schedule_and_create_task(
 
     # subtract one day to create task day before pickup
     if pickup_dates and day in [d - 1 for d in pickup_dates]:
-        await tasks_service.create_task(session, models.TaskCreate(name=task_name))
+        await services.create_task(session, models.TaskCreate(name=task_name))
 
 
 @broker.task(schedule=[{"cron": "0 2 * * *", **DEFAULT_SCHEDULE_ARGS}])

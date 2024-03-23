@@ -25,10 +25,11 @@ config.set_main_option("sqlalchemy.url", settings.database_url)
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from database.tasks import models  # noqa
-from database.users import models  # noqa
-from database.schedules import models  # noqa
-from database.shopping import models  # noqa
+from tasks import models  # noqa
+from users import models  # noqa
+from schedules import models  # noqa
+from shopping import models  # noqa
+from recipes import models  # noqa
 
 target_metadata = SQLModel.metadata
 

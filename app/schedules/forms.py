@@ -1,5 +1,5 @@
 from common.forms import Form
-from database.schedules import models
+from schedules import models
 
 
 class ScheduleForm(Form[models.ScheduleCreate]):

@@ -4,7 +4,8 @@ from enum import Enum
 
 import paho.mqtt.client as mqtt
 from config import MqttSettings
-from database.tasks import models
+
+from tasks import models
 
 logger = logging.getLogger(__name__)
 

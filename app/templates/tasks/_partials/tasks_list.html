@@ -13,30 +13,27 @@
     <div class="list-item {% if task.completed %} disabled {% endif %}">
       <input id="task_{{ task.id }}"name="task_id" type="hidden" value="{{ task.id }}" />
       <div class="list-item-left-action">
-      {% if task.completed %}
-        <img 
-          class="list-item-undo"
-          src="{{ url_for('static', path='svg/refresh-cw.svg') }}"
-          hx-patch="/tasks/{{ task.id }}/undo-complete"
-          hx-target=".tasks-container"
-          hx-swap="outerHTML"
-          hx-include="#task_{{ task.id }}"
-          hx-indicator="#loading"
-          hx-disabled-elt="this"
-        ></img>
-      {% else %}
-        <input
-          type="checkbox"
-          class="todo-checkbox"
-          hx-patch="/tasks/{{ task.id }}/complete"
-          hx-target=".tasks-container"
-          hx-swap="outerHTML"
-          hx-indicator="#loading"
-          hx-disabled-elt="this"
-          autocomplete="off"
-        />
-      {% endif %}
-
+        <form>
+          <input 
+            type="hidden" 
+            value="0"
+            name="completed"
+            {% if not task.completed %} disabled {% endif %}
+          />
+          <input
+            type="checkbox"
+            name="completed"
+            class="todo-checkbox"
+            hx-patch="/tasks/{{ task.id }}"
+            hx-target=".tasks-container"
+            hx-swap="outerHTML"
+            hx-indicator="#loading"
+            hx-disabled-elt="this"
+            autocomplete="off"
+            value="1"
+            {% if task.completed %} checked {% endif %}
+          />
+        </form>
       </div>
       <hgroup>
          <h6
@@ -72,9 +69,9 @@
               <input 
                 type="checkbox" 
                 id="user-{{ user.id }}" 
-                name="user_id" 
+                name="assigned_to_id" 
                 value="{{ user.id }}"
-                hx-patch="/tasks/{{ task.id }}/assign/{{ user.id }}"
+                hx-patch="/tasks/{{ task.id }}"
                 hx-target=".tasks-container"
                 hx-swap="outerHTML"
                 hx-indicator="#loading"

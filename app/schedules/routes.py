@@ -1,14 +1,13 @@
 from typing import Annotated
 
-from common import htmx_utils
-from database import get_session
-from database.schedules import crud
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from forms import schedules as schedules_forms
-from services import schedules as schedules_service
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from common import htmx_utils
+from database import get_session
+from schedules import crud, forms, services
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -18,7 +17,7 @@ async def get_schedules_context(session: AsyncSession) -> dict:
     return {"schedules": await crud.get_list(session)}
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse)
 async def get_schedules(request: Request, session: AsyncSession = Depends(get_session)):
     context = await get_schedules_context(session)
     return htmx_utils.template_response(
@@ -69,7 +68,7 @@ async def create_schedule(
     session: AsyncSession = Depends(get_session),
 ):
     context = {"schedule": form_data, "errors": {}}
-    form = schedules_forms.ScheduleForm(form_data)
+    form = forms.ScheduleForm(form_data)
     if not form.is_valid():
         context["errors"] = form.form_errors()
         return htmx_utils.template_response(
@@ -80,7 +79,7 @@ async def create_schedule(
             full_template="schedules/create.html",
         )
 
-    schedule = await schedules_service.create_schedule(session, form.validated_model)
+    schedule = await services.create_schedule(session, form.validated_model)
 
     context = {
         "schedule": schedule,
@@ -106,7 +105,7 @@ async def edit_schedule(
     session: AsyncSession = Depends(get_session),
 ):
     context = {"schedule_id": schedule_id, "schedule": form_data, "errors": {}}
-    form = schedules_forms.ScheduleForm(form_data)
+    form = forms.ScheduleForm(form_data)
     if not form.is_valid():
         context["errors"] = form.form_errors()
         return htmx_utils.template_response(
@@ -117,7 +116,7 @@ async def edit_schedule(
             full_template="schedules/edit.html",
         )
 
-    schedule = await schedules_service.edit_schedule(
+    schedule = await services.edit_schedule(
         session=session,
         input_schedule=form.validated_model,
         schedule_id=schedule_id,

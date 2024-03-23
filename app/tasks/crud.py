@@ -1,9 +1,10 @@
 from collections.abc import Iterable, Sequence
 
-from database.tasks.models import Task
 from sqlalchemy import delete, func
 from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from tasks.models import Task
 
 
 async def get_list(session: AsyncSession) -> Sequence[Task]:

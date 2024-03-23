@@ -1,9 +1,10 @@
 import httpx
-from common import htmx_utils
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+
+from common import htmx_utils
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -24,7 +25,7 @@ async def get_random_cat() -> Cat:
     return Cat(**response.json()[0])
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse)
 async def index(request: Request):
     context = {"cat": await get_random_cat()}
     return htmx_utils.template_response(

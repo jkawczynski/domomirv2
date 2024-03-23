@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from . import models
+from users import models
 
 
 async def get_list(session: AsyncSession) -> Sequence[models.User]:

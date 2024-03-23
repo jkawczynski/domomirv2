@@ -1,6 +1,7 @@
-from database.schedules import crud, models
 from fastapi import HTTPException
 from sqlmodel.ext.asyncio.session import AsyncSession
+
+from schedules import crud, models
 
 
 async def create_schedule(

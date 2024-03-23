@@ -3,8 +3,8 @@ import logging
 from datetime import date
 
 from database import get_session, session_maker
-from database.schedules import crud as schedules_crud
-from database.tasks import crud, models
+from schedules import crud as schedules_crud
+from tasks import crud, models
 from tkq import DEFAULT_SCHEDULE_ARGS, broker
 
 logger = logging.getLogger(__name__)

@@ -61,3 +61,10 @@
   }
 }
 
+.shopping-list-item-name {
+  margin-top: 13px;
+}
+
+.hide {
+  display: none;
+}

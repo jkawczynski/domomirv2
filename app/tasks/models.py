@@ -39,3 +39,8 @@ class Task(SQLModel, table=True):
 class TaskCreate(SQLModel):
     name: str
     task_date: date = Field(default_factory=lambda: date.today())
+
+
+class TaskEdit(SQLModel):
+    completed: bool | None = Field(default=None)
+    assigned_to_id: int | None = Field(default=None)

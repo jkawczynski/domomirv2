@@ -4,9 +4,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from .schedules import models  # noqa E501
-from .tasks import models  # noqa E501
-from .users import models  # noqa E501
+from schedules import models  # noqa
+from shopping import models  # noqa
+from tasks import models  # noqa
+from users import models  # noqa
 
 settings = get_settings()
 
