@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     serve_local_images: bool = True
     local_images_url: str = "/images"
     local_images_directory_path: str = "upload/images"
+    app_version: str = "local"
 
 
 @lru_cache

@@ -2,17 +2,20 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from sqlmodel.ext.asyncio.session import AsyncSession
+from templates import templates
 
 from common import htmx_utils
 from database import get_session
-from recipes import crud, filters, forms, services
+from recipes import crud, forms, services
 from shopping.tasks import add_ingredients_to_shopping_list
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
-templates.env.filters.update(filters.template_filters)
+
+
+async def get_recipes_context(session: AsyncSession) -> dict:
+    recipes = await crud.get_list(session)
+    return {"recipes": list(recipes)}
 
 
 @router.post("/upload")
@@ -22,10 +25,15 @@ async def upload_file(
     session: AsyncSession = Depends(get_session),
 ):
     db_images = await services.upload_and_save_images(session, files)
+    context = {
+        "errors": {},
+        "recipe": {"ingredients": [{} for i in range(3)]},
+        "images": db_images,
+    }
     return htmx_utils.template_response(
         request=request,
         templates=templates,
-        context={"images": db_images},
+        context=context,
         partial_template="recipes/_partials/form_recipe_images.html",
         full_template="recipes/create.html",
     )
@@ -36,11 +44,10 @@ async def index(
     request: Request,
     session: AsyncSession = Depends(get_session),
 ):
-    recipes = await crud.get_list(session)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
-        context={"recipes": list(recipes)},
+        context=await get_recipes_context(session),
         partial_template="recipes/_partials/index.html",
         full_template="recipes/index.html",
     )
@@ -80,6 +87,7 @@ async def more_ingredients(
 ):
     form = forms.RecipeCreateForm(form_data)
     form.clean()
+    form.add_empty_ingredients()
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -110,6 +118,7 @@ async def create_recipe(
     form = forms.RecipeCreateForm(form_data)
     if not form.is_valid():
         context["errors"] = form.form_errors()
+        form.add_empty_ingredients()
         return htmx_utils.template_response(
             request=request,
             templates=templates,
@@ -118,14 +127,25 @@ async def create_recipe(
             full_template="recipes/create.html",
         )
 
-    rec = form.validated_model
-    await services.create_recipe(session, rec, form.images_ids)
+    recipe = await services.create_recipe(
+        session,
+        form.validated_model,
+        form.images_ids,
+    )
+
+    context = {
+        "action": "created",
+        "recipe": recipe,
+        **await get_recipes_context(session),
+    }
+    headers = {"HX-Push-Url": "/recipes"}
     return htmx_utils.template_response(
         request=request,
         templates=templates,
         context=context,
-        partial_template="recipes/_partials/create.html",
-        full_template="recipes/create.html",
+        headers=headers,
+        partial_template="recipes/_partials/index.html",
+        full_template="recipes/index.html",
     )
 
 

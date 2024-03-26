@@ -15,7 +15,13 @@
                     </div>
                     <hgroup>
                         <h6>{{ ingredient.name }}</h6>
-                        <p>{{ ingredient.amount_and_unit }}</p>
+                        <p>
+                            {% if ingredient.amount_and_unit %}
+                                {{ ingredient.amount_and_unit | default("-") }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </p>
                     </hgroup>
                 </div>
             {% endfor %}

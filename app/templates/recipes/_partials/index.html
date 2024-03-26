@@ -13,6 +13,18 @@
                 hx-push-url="true">Create</button>
     </div>
     <hr />
+    {% if recipe %}
+        <article class="pico-background-green-100">
+            <span>
+                <a href="/recipes/{{ recipe.id }}"
+                   hx-get="/recipes/{{ recipe.id }}"
+                   hx-target="#content-container"
+                   hx-swap="innerHTML"
+                   hx-indicator="#loading"
+                   hx-push-url="true">Recipe</a> {{ action }} successfully!
+            </span>
+        </article>
+    {% endif %}
     <input type="search"
            id="search"
            name="query"

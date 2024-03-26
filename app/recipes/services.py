@@ -39,4 +39,4 @@ async def create_recipe(
     if images_ids:
         await crud.connect_recipe_with_images(session, db_recipe, images_ids)
 
-    return recipe
+    return db_recipe

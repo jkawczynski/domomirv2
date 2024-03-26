@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 @broker.task(
     schedule=[
-        {"cron": "0 7  * * *", **DEFAULT_SCHEDULE_ARGS},
+        {"cron": "0 7 * * *", **DEFAULT_SCHEDULE_ARGS},
         {"cron": "0 13 * * *", **DEFAULT_SCHEDULE_ARGS},
         {"cron": "0 17 * * *", **DEFAULT_SCHEDULE_ARGS},
         {"cron": "0 21 * * *", **DEFAULT_SCHEDULE_ARGS},

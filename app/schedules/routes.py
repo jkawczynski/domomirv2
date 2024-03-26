@@ -2,15 +2,14 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from sqlmodel.ext.asyncio.session import AsyncSession
+from templates import templates
 
 from common import htmx_utils
 from database import get_session
 from schedules import crud, forms, services
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
 
 async def get_schedules_context(session: AsyncSession) -> dict:

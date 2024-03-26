@@ -30,9 +30,7 @@ class RecipeCreateForm(Form[models.RecipeCreate]):
             else:
                 self.images_ids = [int(self.form_data["images"])]
 
-        self._add_empty_ingredients()
-
-    def _add_empty_ingredients(self):
+    def add_empty_ingredients(self):
         for _ in range(3):
             self.form_data["ingredients"].append({"name": "", "amount_and_unit": ""})
 

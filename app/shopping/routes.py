@@ -3,15 +3,14 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from sqlmodel.ext.asyncio.session import AsyncSession
+from templates import templates
 
 from common import htmx_utils
 from database import get_session
 from shopping import crud, forms, services
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
 
 async def get_context(session: AsyncSession) -> dict:

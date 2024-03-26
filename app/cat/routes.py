@@ -1,13 +1,12 @@
 import httpx
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+from templates import templates
 
 from common import htmx_utils
 
 router = APIRouter()
-templates = Jinja2Templates(directory="templates")
 
 
 class Cat(BaseModel):
