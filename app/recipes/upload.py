@@ -2,19 +2,21 @@ import os.path
 import secrets
 import shutil
 
+from config import get_settings
 from fastapi import UploadFile
 
-UPLOAD_DIR = "upload"
+settings = get_settings()
 
 
 def upload_image(file: UploadFile) -> str:
     file_name = file.filename
-    file_path = f"{UPLOAD_DIR}/images/{file_name}"
+    assert file_name
+    file_path = os.path.join(settings.local_images_directory_path, file_name)
 
     if os.path.exists(file_path):
         hash = secrets.token_urlsafe(6)
         file_name = f"{hash}_{file_name}"
-        file_path = f"{UPLOAD_DIR}/images/{file_name}"
+        file_path = os.path.join(settings.local_images_directory_path, file_name)
 
     with open(file_path, "wb") as dst:
         shutil.copyfileobj(file.file, dst)

@@ -1,6 +1,9 @@
 <div class="grid">
     <form autocomplete="off"
-          _="on htmx:beforeRequest remove @aria-invalid from .shopping-item-input end on htmx:beforeRequest add .hide to .form-field-error-container">
+        _="on htmx:beforeRequest remove @aria-invalid from .shopping-item-input end
+        on htmx:beforeRequest add .hide to .form-field-error-container end
+        on htmx:afterRequest reset() me end"
+        ">
         <input class="shopping-item-input"
                id="shopping-item-name"
                name="name"
