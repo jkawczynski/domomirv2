@@ -1,8 +1,8 @@
 <article>
+    <header>
+        Ingredients
+    </header>
     <form _="on htmx:afterRequest reset() me">
-        <header>
-            Ingredients
-        </header>
         <div class="container-fluid">
             {% for ingredient in recipe.ingredients %}
                 <div class="list-item">

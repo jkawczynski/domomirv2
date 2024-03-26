@@ -8,7 +8,7 @@
             <h3>{{ recipe.name }}</h3>
         {% endif %}
     </header>
-    {{ recipe.description | safe }}
+    {% if recipe.description %}{{ recipe.description | safe }}{% endif %}
 </article>
 <article>
     <header>
@@ -16,4 +16,6 @@
     </header>
     {% include "recipes/_partials/recipe_images.html" %}
 </article>
-{% include "recipes/_partials/ingredients.html" %}
+{% if recipe.ingredients %}
+    {% include "recipes/_partials/ingredients.html" %}
+{% endif %}

@@ -22,5 +22,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if settings.serve_local_images:
     app.mount(
-        settings.local_images_url, StaticFiles(directory="upload/images"), name="images"
+        settings.local_images_url,
+        StaticFiles(directory=settings.local_images_directory_path),
+        name="images",
     )
