@@ -6,6 +6,7 @@ from rich import print
 from typer import Typer
 
 from database import get_session
+from shopping import crud as shopping_crud
 from users import crud, models
 
 
@@ -56,6 +57,13 @@ async def create_user(name: str):
     await crud.persist(session, user)
 
     print_success(f"Created user with {name=}")
+
+
+@app.command()
+async def clear_shopping():
+    session_maker = get_session()
+    session = await anext(session_maker)
+    await shopping_crud.remove_all_completed(session)
 
 
 if __name__ == "__main__":

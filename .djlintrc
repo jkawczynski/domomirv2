@@ -1,0 +1,6 @@
+{
+  "profile": "jinja",
+  "extension": "html",
+  "ignore": "T003,H006,H013,J018,H030,H031"
+}
+

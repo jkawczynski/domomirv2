@@ -15,7 +15,7 @@ SQLALCHEMY_DATABASE_URL = settings.database_url
 
 engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL,
-    echo=settings.echo_db,
+    echo=True,  # settings.echo_db,
     future=True,
 )
 session_maker = sessionmaker(

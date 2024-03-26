@@ -1,90 +1,94 @@
 <div class="tasks-container">
-  <div>
-    {% if all_completed %}
-    <h6 class="all-completed">Good job! All tasks are completed!</h6>
-    {% elif partially_completed %}
-    <h6 class="parially-completed">You completed {{ partially_completed }} tasks today, keep it up!</h6>
-    {% else %}
-    <h6>You have {{ tasks | length }} task(s) for today</h6>
-    {% endif %}
-  </div>
-  <div class="container-fluid">
-    {% if tasks %} {% for task in tasks %}
-    <div class="list-item {% if task.completed %} disabled {% endif %}">
-      <input id="task_{{ task.id }}"name="task_id" type="hidden" value="{{ task.id }}" />
-      <div class="list-item-left-action">
-        <form>
-          <input 
-            type="hidden" 
-            value="0"
-            name="completed"
-            {% if not task.completed %} disabled {% endif %}
-          />
-          <input
-            type="checkbox"
-            name="completed"
-            class="todo-checkbox"
-            hx-patch="/tasks/{{ task.id }}"
-            hx-target=".tasks-container"
-            hx-swap="outerHTML"
-            hx-indicator="#loading"
-            hx-disabled-elt="this"
-            autocomplete="off"
-            value="1"
-            {% if task.completed %} checked {% endif %}
-          />
-        </form>
-      </div>
-      <hgroup>
-         <h6
-           class="{% if task.completed %} completed-list-item {% elif task.is_overdue %} overdue-task {% endif %}"
-         >
-           {{ task.name }}
-         </h6>
-         <p>{% if task.assigned_to %} {{ task.assigned_to.name }} {% else %} unassigned {% endif %}</p>
-      </hgroup>
-      <div class="list-item-right-action">
-        <img 
-          src="{{ url_for('static', path='svg/dots.svg') }}"
-          _="on click add @open='true' to next <dialog/>"
-        ></img>
-      </div>
+    <div>
+        {% if all_completed %}
+            <h6 class="all-completed">Good job! All tasks are completed!</h6>
+        {% elif partially_completed %}
+            <h6 class="parially-completed">You completed {{ partially_completed }} tasks today, keep it up!</h6>
+        {% else %}
+            <h6>You have {{ tasks | length }} task(s) for today</h6>
+        {% endif %}
     </div>
-    <dialog id="task-dialog-{{task.id}}">
-      <article>
-        <header>
-          <button 
-            aria-label="Close" 
-            rel="prev"
-            _="on click remove @open from closest parent <dialog/>"
-          ></button>
-          <p>
-            <strong>{{ task.name }}</strong>
-          </p>
-        </header>
-        <fieldset>
-          <legend><strong>Assign to:</strong></legend>
-          {% for user in users %}
-          <label for="user-{{ user.id }}">
-              <input 
-                type="checkbox" 
-                id="user-{{ user.id }}" 
-                name="assigned_to_id" 
-                value="{{ user.id }}"
-                hx-patch="/tasks/{{ task.id }}"
-                hx-target=".tasks-container"
-                hx-swap="outerHTML"
-                hx-indicator="#loading"
-                hx-disabled-elt="this"
-                autocomplete="off"
-                {% if user.id == task.assigned_to.id %} checked="checked" {% endif %}
-              >
-              {{ user.name }}
-          </label>
-          {% endfor %}
-        </fieldset>
-      </article>
-    </dialog>
-    {% endfor %} {% else %} No tasks for today :D {% endif %}
-  </div>
+    <div class="container-fluid">
+        {% if tasks %}
+            {% for task in tasks %}
+                <div class="list-item {% if task.completed %}disabled{% endif %}">
+                    <input id="task_{{ task.id }}"
+                           name="task_id"
+                           type="hidden"
+                           value="{{ task.id }}" />
+                    <div class="list-item-left-action">
+                        <form>
+                            <input type="hidden"
+                                   value="0"
+                                   name="completed"
+                                   {% if not task.completed %}disabled{% endif %} />
+                            <input type="checkbox"
+                                   name="completed"
+                                   class="todo-checkbox"
+                                   hx-patch="/tasks/{{ task.id }}"
+                                   hx-target=".tasks-container"
+                                   hx-swap="outerHTML"
+                                   hx-indicator="#loading"
+                                   hx-disabled-elt="this"
+                                   autocomplete="off"
+                                   value="1"
+                                   {% if task.completed %}checked{% endif %} />
+                        </form>
+                    </div>
+                    <hgroup>
+                        <h6 class="{% if task.completed %} completed-list-item {% elif task.is_overdue %} overdue-task {% endif %}">
+                            {{ task.name }}
+                        </h6>
+                        <p>
+                            {% if task.assigned_to %}
+                                {{ task.assigned_to.name }}
+                            {% else %}
+                                unassigned
+                            {% endif %}
+                        </p>
+                    </hgroup>
+                    <div class="list-item-right-action">
+                        <img src="{{ url_for('static', path='svg/dots.svg') }}"
+                             _="on click add @open='true' to next <dialog/>">
+                    </img>
+                </div>
+            </div>
+            <dialog id="task-dialog-{{ task.id }}">
+                <article>
+                    <header>
+                        <button aria-label="Close"
+                                rel="prev"
+                                _="on click remove @open from closest parent <dialog/>"></button>
+                    <p>
+                        <strong>{{ task.name }}</strong>
+                    </p>
+                </header>
+                <fieldset>
+                    <legend>
+                        <strong>Assign to:</strong>
+                    </legend>
+                    {% for user in users %}
+                        <label for="user-{{ user.id }}">
+                            <input type="checkbox"
+                                   id="user-{{ user.id }}"
+                                   name="assigned_to_id"
+                                   value="{{ user.id }}"
+                                   hx-patch="/tasks/{{ task.id }}"
+                                   hx-target=".tasks-container"
+                                   hx-swap="outerHTML"
+                                   hx-indicator="#loading"
+                                   hx-disabled-elt="this"
+                                   autocomplete="off"
+                                   {% if user.id == task.assigned_to.id %}checked="checked"{% endif %}>
+                            {{ user.name }}
+                        </label>
+                    {% endfor %}
+                </fieldset>
+            </article>
+        </dialog>
+    {% endfor %}
+{% else %}
+    No tasks for today :D
+{% endif %}
+</div>
 </div>

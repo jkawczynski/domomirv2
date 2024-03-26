@@ -1,34 +1,30 @@
-<div 
-  id="focus-loader"
-  hx-trigger="focusTrigger from:body"
-  hx-get="/schedules"
-  hx-swap="innerHTML"
-  hx-indicator="#loading"
->
-  <div class="grid">
-    <h1>Schedules</h1>
-    <button
-      hx-get="/schedules/create"
-      hx-target="#content-container"
-      hx-swap="innerHTML"
-      hx-indicator="#loading"
-      hx-push-url="true"
-    >Create</button>
-  </div>
-  <hr/>
-  <div class="schedules-container">
-    {% if schedule %}
-    <article class="pico-background-green-500">
-      <a 
-        href="/schedules/{{ schedule.id }}"
-        hx-get="/schedules/{{ schedule.id }}"
-        hx-target="#content-container"
-        hx-swap="innerHTML"
-        hx-indicator="#loading"
-        hx-push-url="true"
-      >Schedule</a> {{ action }} successfully!</span>
-    </article>
-    {% endif %}
-    {% include "schedules/_partials/schedules_table.html" %}
-  </div>
+<div id="focus-loader"
+     hx-trigger="focusTrigger from:body"
+     hx-get="/schedules"
+     hx-swap="innerHTML"
+     hx-indicator="#loading">
+    <div class="grid">
+        <h1>Schedules</h1>
+        <button class="outline"
+                hx-get="/schedules/create"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-push-url="true">Create</button>
+    </div>
+    <hr />
+    <div class="schedules-container">
+        {% if schedule %}
+            <article class="pico-background-green-100">
+                <span>
+                    <a href="/schedules/{{ schedule.id }}"
+                       hx-get="/schedules/{{ schedule.id }}"
+                       hx-target="#content-container"
+                       hx-swap="innerHTML"
+                       hx-indicator="#loading"
+                       hx-push-url="true">Schedule</a> {{ action }} successfully!</span>
+            </article>
+        {% endif %}
+        {% include "schedules/_partials/schedules_table.html" %}
+    </div>
 </div>

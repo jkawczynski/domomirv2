@@ -1,15 +1,13 @@
 <h1>Edit Schedule</h1>
-<hr/>
+<hr />
 <div class="schedules-form-container">
-  <form>
-  {% include "schedules/_partials/form.html" %}
-  <button 
-    type="submit"
-    hx-put="/schedules/{{ schedule_id }}"
-    hx-target="#content-container"
-    hx-swap="innerHTML"
-    hx-indicator="#loading"
-    hx-disabled-elt="this"
-  >Save</button>
-  </form>
+    <form>
+        {% include "schedules/_partials/form.html" %}
+        <button type="submit"
+                hx-put="/schedules/{{ schedule_id }}"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-disabled-elt="this">Save</button>
+    </form>
 </div>

@@ -1,102 +1,80 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', path='css/pico.fuchsia.min.css') }}"
-      defer
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', path='css/pico.colors.min.css') }}"
-      defer
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', path='css/app.css') }}"
-      defer
-    />
-    <script src="{{ url_for('static', path='js/htmx.min.js') }}" defer></script>
-    <script src="{{ url_for('static', path='js/json-enc.js') }}" defer></script>
-    <script src="{{ url_for('static', path='js/response-targets.js') }}" defer></script>
-    <script src="{{ url_for('static', path='js/_hyperscript.min.js') }}" defer></script>
-    <script src="{{ url_for('static', path='js/app.js') }}" defer></script>
-    <title>Domomir</title>
-  </head>
-  <body class="container" hx-ext="json-enc, response-targets">
-      {% block nav %}
-      <nav>
-        <ul class="brand">
-          <li><strong>Domomir</strong></li>
-        </ul>
-        <ul class="menu">
-          <li class="item">
-            <a
-              href="/cat"
-              hx-get="/cat"
-              hx-target="#content-container"
-              hx-swap="innerHTML"
-              hx-indicator="#loading"
-              hx-push-url="true"
-              >🐈</a
-            >
-          </li>
-          <li class="item">
-            <a
-              href="/"
-              hx-get="/"
-              hx-target="#content-container"
-              hx-swap="innerHTML"
-              hx-indicator="#loading"
-              hx-push-url="true"
-              >✅ <span class="menu-item-name">Daily tasks</span></a
-            >
-          </li>
-          <li class="item">
-            <a
-              href="/schedules"
-              hx-get="/schedules"
-              hx-target="#content-container"
-              hx-swap="innerHTML"
-              hx-indicator="#loading"
-              hx-push-url="true"
-              >🗓 <span class="menu-item-name">Schedules</span></a
-            >
-          </li>
-          <li class="item">
-            <a
-              href="/shopping"
-              hx-get="/shopping"
-              hx-target="#content-container"
-              hx-swap="innerHTML"
-              hx-indicator="#loading"
-              hx-push-url="true"
-              >🛒 <span class="menu-item-name">Shopping List</span></a
-            >
-          </li>
-          <li class="item">
-            <a
-              href="/recipes"
-              hx-get="/recipes"
-              hx-target="#content-container"
-              hx-swap="innerHTML"
-              hx-indicator="#loading"
-              hx-push-url="true"
-              >🍲 <span class="menu-item-name">Recipes</span></a
-            >
-          </li>
-        </ul>
-      </nav>
-      <progress id="loading" class="htmx-indicator"></progress>
-      {% endblock %}
-    <main>
-      <div id="content-container">
-      {% block content %} 
-      {% endblock %}
-      </div>
-    </main>
-  </body>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light dark" />
+        <link rel="stylesheet"
+              href="{{ url_for('static', path='css/pico.fuchsia.min.css') }}" />
+        <link rel="stylesheet"
+              href="{{ url_for('static', path='css/pico.colors.min.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}" />
+        <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
+        <script src="{{ url_for('static', path='js/json-enc.js') }}"></script>
+        <script src="{{ url_for('static', path='js/response-targets.js') }}"></script>
+        <script src="{{ url_for('static', path='js/_hyperscript.min.js') }}"></script>
+        <script src="http://192.168.50.79:8006/tinymce.min.js"></script>
+        <script src="{{ url_for('static', path='js/app.js') }}"></script>
+        {% block scripts %}{% endblock %}
+        <title>Domomir</title>
+    </head>
+    <body class="container" hx-ext="json-enc, response-targets">
+        {% block nav %}
+            <nav>
+                <ul class="brand">
+                    <li>
+                        <strong>Domomir</strong>
+                    </li>
+                </ul>
+                <ul class="menu">
+                    <li class="item">
+                        <a href="/cat"
+                           hx-get="/cat"
+                           hx-target="#content-container"
+                           hx-swap="innerHTML"
+                           hx-indicator="#loading"
+                           hx-push-url="true">🐈</a>
+                    </li>
+                    <li class="item">
+                        <a href="/"
+                           hx-get="/"
+                           hx-target="#content-container"
+                           hx-swap="innerHTML"
+                           hx-indicator="#loading"
+                           hx-push-url="true">✅ <span class="menu-item-name">Daily tasks</span></a>
+                    </li>
+                    <li class="item">
+                        <a href="/schedules"
+                           hx-get="/schedules"
+                           hx-target="#content-container"
+                           hx-swap="innerHTML"
+                           hx-indicator="#loading"
+                           hx-push-url="true">🗓 <span class="menu-item-name">Schedules</span></a>
+                    </li>
+                    <li class="item">
+                        <a href="/shopping"
+                           hx-get="/shopping"
+                           hx-target="#content-container"
+                           hx-swap="innerHTML"
+                           hx-indicator="#loading"
+                           hx-push-url="true">🛒 <span class="menu-item-name">Shopping List</span></a>
+                    </li>
+                    <li class="item">
+                        <a href="/recipes"
+                           hx-get="/recipes"
+                           hx-target="#content-container"
+                           hx-swap="innerHTML"
+                           hx-indicator="#loading"
+                           hx-push-url="true">🍲 <span class="menu-item-name">Recipes</span></a>
+                    </li>
+                </ul>
+            </nav>
+            <progress id="loading" class="htmx-indicator"></progress>
+        {% endblock %}
+        <main>
+            <div id="content-container">
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </body>
 </html>

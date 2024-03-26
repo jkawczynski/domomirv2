@@ -1,0 +1,55 @@
+<fieldset>
+    <article>
+        <header>
+            Recipe data
+        </header>
+        <div>
+            <input name="name"
+                   placeholder="Recipe name"
+                   {% if errors.name %}aria-invalid="true" aria-describedby="invalid-helper"{% endif %}
+                   {% if recipe.name %}value="{{ recipe.name }}"{% endif %} />
+            {% if errors.name %}<small id="invalid-helper">{{ errors.name }}</small>{% endif %}
+        </div>
+        <div>
+            <input name="url"
+                   placeholder="Recipe link"
+                   {% if errors.url %}aria-invalid="true" aria-describedby="invalid-helper"{% endif %}
+                   {% if recipe.url %}value="{{ recipe.url }}"{% endif %} />
+            {% if errors.url %}<small id="invalid-helper">{{ errors.url }}</small>{% endif %}
+        </div>
+        <div>
+            <textarea name="description" id="description" autocomplete="off">
+                {{ recipe.description }}
+            </textarea>
+            {% if errors.description %}<small id="invalid-helper">{{ errors.description }}</small>{% endif %}
+        </div>
+    </article>
+    <article>
+        <header>
+            Pictures
+        </header>
+        <label hx-ext="ignore:json-enc">
+            <input type="file"
+                   name="files"
+                   multiple
+                   o
+                   accept="image/*"
+                   hx-post="/recipes/upload"
+                   hx-target=".recipe-images-container"
+                   hx-swap="outerHTML"
+                   hx-trigger="change"
+                   hx-encoding="multipart/form-data"
+                   hx-disabled-elt="this"
+                   _='on htmx:xhr:progress(loaded, total) set #upload-progress.value to (loaded/total)*100' />
+        </label>
+        <progress id="upload-progress" value="0" max="100"></progress>
+        <hr />
+        {% include "recipes/_partials/form_recipe_images.html" %}
+    </article>
+    <article>
+        <header>
+            Ingredients
+        </header>
+        {% include "recipes/_partials/form_ingredients.html" %}
+    </article>
+</fieldset>

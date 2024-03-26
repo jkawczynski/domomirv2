@@ -26,7 +26,21 @@ class Form(Generic[T]):
         super().__init__()
         self.skip_empty_strings = skip_empty_strings
         self.form_data = form_data
+
+    def clean(self):
         self._clean_form_data()
+
+    def is_valid(self) -> bool:
+        try:
+            self.clean()
+            self._validated_model = self.model.model_validate(self.form_data)
+            return True
+        except ValidationError as exc:
+            self.validation_error = exc
+            return False
+
+    def form_errors(self) -> dict:
+        return parse_errors(self.validation_error.errors())
 
     def _clean_form_data(self):
         if self.skip_empty_strings:
@@ -36,17 +50,6 @@ class Form(Generic[T]):
         for key in self.form_data:
             if self.form_data[key] == "":
                 self.form_data[key] = None
-
-    def is_valid(self) -> bool:
-        try:
-            self._validated_model = self.model.model_validate(self.form_data)
-            return True
-        except ValidationError as exc:
-            self.validation_error = exc
-            return False
-
-    def form_errors(self) -> dict:
-        return parse_errors(self.validation_error.errors())
 
     @property
     def validated_model(self) -> T:

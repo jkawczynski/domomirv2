@@ -1,12 +1,10 @@
-<div
-  id="focus-loader"
-  hx-trigger="focusTrigger from:body"
-  hx-get="/"shopping
-  hx-swap="innerHTML"
-  hx-indicator="#loading"
->
-  <h1>Daily Tasks</h1>
-  {% include 'tasks/_partials/tasks_list.html' %}
-  <hr/>
-  {% include 'tasks/_partials/add_task.html' %}
+<div id="focus-loader"
+     hx-trigger="focusTrigger from:body"
+     hx-get="/"
+     hx-swap="innerHTML"
+     hx-indicator="#loading">
+    <h1>Daily Tasks</h1>
+    {% include "tasks/_partials/tasks_list.html" %}
+    <hr />
+    {% include "tasks/_partials/add_task.html" %}
 </div>

@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/domomir"
     echo_db: bool = False
 
+    serve_local_images: bool = True
+    local_images_url: str = "/images"
+    local_images_directory_path: str = "upload/images"
+
 
 @lru_cache
 def get_settings():

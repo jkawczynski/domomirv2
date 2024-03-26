@@ -1,10 +1,8 @@
-<div 
-  id="focus-loader"
-  hx-trigger="focusTrigger from:body"
-  hx-get="/cat"
-  hx-swap="innerHTML"
-  hx-indicator="#loading"
->
-  <h1>Emergency Cat Photo</h1>
-  <image src="{{cat.url}}" alt="Please wait, cat is preparing for you..."/>
+<div id="focus-loader"
+     hx-trigger="focusTrigger from:body"
+     hx-get="/cat"
+     hx-swap="innerHTML"
+     hx-indicator="#loading">
+    <h1>Emergency Cat Photo</h1>
+    <image src="{{ cat.url }}" alt="Please wait, cat is preparing for you..." />
 </div>

@@ -1,0 +1,27 @@
+<div id="focus-loader"
+     hx-trigger="focusTrigger from:body"
+     hx-get="/recipes"
+     hx-swap="innerHTML"
+     hx-indicator="#loading">
+    <div class="grid">
+        <h1>Recipes</h1>
+        <button class="outline"
+                hx-get="/recipes/create"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-push-url="true">Create</button>
+    </div>
+    <hr />
+    <input type="search"
+           id="search"
+           name="query"
+           autocomplete="off"
+           placeholder="Search"
+           hx-get="/recipes/search"
+           hx-params="query"
+           hx-trigger="keyup changed delay:1s"
+           hx-target=".recipes-list-container"
+           hx-indicator="#loading" />
+    <div class="recipes-list-container">{% include "recipes/_partials/recipes_list.html" %}</div>
+</div>

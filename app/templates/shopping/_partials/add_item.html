@@ -1,32 +1,20 @@
 <div class="grid">
-  <form 
-    autocomplete="off"
-    _="on htmx:beforeRequest remove @aria-invalid from .shopping-item-input end
-       on htmx:beforeRequest add .hide to .form-field-error-container"
-  >
-    <input 
-      class="shopping-item-input"
-      id="shopping-item-name"
-      name="name" type="text" placeholder="New item"
-      {% if errors and errors.name %}
-      aria-invalid="true"
-      aria-describedby="invalid-helper"
-      {% endif %}
-      {% if item and item.name %} value="{{ item.name }}" {% endif %}
-    />
-    <small class="form-field-error-container" id="invalid-helper">
-        {{ (errors|default({})).name }}
-    </small>
-    <button
-      type="submit"
-      hx-post="/shopping"
-      hx-indicator="#loading"
-      hx-target=".items-container"
-      hx-target-400="closest div"
-      hx-disabled-elt="this"
-      hx-swap="outerHTML"
-    >
-      Add
-    </button>
-  </form>
+    <form autocomplete="off"
+          _="on htmx:beforeRequest remove @aria-invalid from .shopping-item-input end on htmx:beforeRequest add .hide to .form-field-error-container">
+        <input class="shopping-item-input"
+               id="shopping-item-name"
+               name="name"
+               type="text"
+               placeholder="New item"
+               {% if errors and errors.name %}aria-invalid="true" aria-describedby="invalid-helper"{% endif %}
+               {% if item and item.name %}value="{{ item.name }}"{% endif %} />
+        <small class="form-field-error-container" id="invalid-helper">{{ (errors|default({}) ).name }}</small>
+        <button type="submit"
+                hx-post="/shopping"
+                hx-indicator="#loading"
+                hx-target=".items-container"
+                hx-target-400="closest div"
+                hx-disabled-elt="this"
+                hx-swap="outerHTML">Add</button>
+    </form>
 </div>

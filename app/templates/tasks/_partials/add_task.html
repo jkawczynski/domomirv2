@@ -1,16 +1,12 @@
 <div class="grid">
-  <form _="on htmx:afterRequest reset() me">
-    <input name="name" type="text" placeholder="New task" id="todo-name" />
-    <button
-      type="submit"
-      hx-post="/tasks"
-      hx-indicator="#loading"
-      hx-target=".tasks-container"
-      hx-swap="outerHTML"
-      hx-include="#todo-name"
-      hx-disabled-elt="this"
-    >
-      Add
-    </button>
-  </form>
+    <form _="on htmx:afterRequest reset() me">
+        <input name="name" type="text" placeholder="New task" id="todo-name" />
+        <button type="submit"
+                hx-post="/tasks"
+                hx-indicator="#loading"
+                hx-target=".tasks-container"
+                hx-swap="outerHTML"
+                hx-include="#todo-name"
+                hx-disabled-elt="this">Add</button>
+    </form>
 </div>

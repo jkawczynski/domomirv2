@@ -1,6 +1,6 @@
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 
-from sqlmodel import col, select
+from sqlmodel import col, delete, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from shopping.models import ShoppingListItem
@@ -25,3 +25,16 @@ async def persist(session: AsyncSession, item: ShoppingListItem) -> ShoppingList
     await session.commit()
     await session.refresh(item)
     return item
+
+
+async def persist_all(session: AsyncSession, items: Iterable[ShoppingListItem]):
+    for item in items:
+        session.add(item)
+
+    await session.commit()
+
+
+async def remove_all_completed(session: AsyncSession):
+    stmt = delete(ShoppingListItem).where(col(ShoppingListItem.completed).is_not(None))
+    await session.exec(stmt)
+    await session.commit()

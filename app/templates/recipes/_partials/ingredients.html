@@ -1,0 +1,37 @@
+<article>
+    <form _="on htmx:afterRequest reset() me">
+        <header>
+            Ingredients
+        </header>
+        <div class="container-fluid">
+            {% for ingredient in recipe.ingredients %}
+                <div class="list-item">
+                    <div class="list-item-left-action">
+                        <input type="checkbox"
+                               name="ingredients"
+                               class="todo-checkbox"
+                               autocomplete="off"
+                               value="{{ ingredient.id }}" />
+                    </div>
+                    <hgroup>
+                        <h6>{{ ingredient.name }}</h6>
+                        <p>{{ ingredient.amount_and_unit }}</p>
+                    </hgroup>
+                </div>
+            {% endfor %}
+        </div>
+        <footer>
+            <article id="ingredients-success-alert"
+                     class=" pico-background-green-100 hide">Added to shopping list!</article>
+            <div class="grid">
+                <button hx-post="/recipes/add-to-shopping-list"
+                        hx-swap="none"
+                        hx-indicator="#loading"
+                        hx-disabled-elt="this"
+                        aria-busy="false"
+                        _="on htmx:beforeRequest set my @aria-busy to 'true' end on htmx:afterRequest set my @aria-busy to 'false' end on htmx:afterRequest[successful==true] remove .hide from #ingredients-success-alert end"
+                        class="secondary outline">Add selected to shopping list</button>
+            </div>
+        </footer>
+    </form>
+</article>

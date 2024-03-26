@@ -1,0 +1,14 @@
+<h1>Create Recipe</h1>
+<hr />
+<div class="recipes-form-container">
+    <form>
+        {% include "recipes/_partials/form.html" %}
+        <button type="submit"
+                hx-post="/recipes"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-disabled-elt="this"
+                hx-params="not files">Save</button>
+    </form>
+</div>

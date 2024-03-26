@@ -1,0 +1,19 @@
+<article>
+    <header>
+        {% if recipe.url %}
+            <h3>
+                <a href="{{ recipe.url }}" target="_blank">{{ recipe.name }} 🔗</a>
+            </h3>
+        {% else %}
+            <h3>{{ recipe.name }}</h3>
+        {% endif %}
+    </header>
+    {{ recipe.description | safe }}
+</article>
+<article>
+    <header>
+        Pictures
+    </header>
+    {% include "recipes/_partials/recipe_images.html" %}
+</article>
+{% include "recipes/_partials/ingredients.html" %}

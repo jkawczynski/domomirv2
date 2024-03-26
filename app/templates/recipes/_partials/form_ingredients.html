@@ -1,0 +1,17 @@
+<label class="ingredients-container">
+    {% for ingredient in recipe.ingredients %}
+        <div class="grid ingredient-grid">
+            <input name="ingredient" placeholder="Name" value="{{ ingredient.name }}" />
+            <input name="amount_and_unit"
+                   placeholder="Amount and Unit"
+                   value="{{ ingredient.amount_and_unit }}" />
+        </div>
+    {% endfor %}
+    <div class="grid">
+        <button type="button"
+                class="outline secondary"
+                hx-patch="/recipes/more-ingredients"
+                hx-target=".ingredients-container"
+                hx-swap="outerHTML">Add more ingredients</button>
+    </div>
+</label>

@@ -1,36 +1,34 @@
 <div class="items-container">
-  <div class="container-fluid">
-    {% if items %} {% for item in items %}
-    <div class="list-item {% if item.completed %} disabled {% endif %}">
-      <div class="list-item-left-action">
-        <form>
-          <input 
-            type="hidden" 
-            value="0"
-            name="completed"
-            {% if not item.completed %} disabled {% endif %}
-          />
-          <input
-            type="checkbox"
-            name="completed"
-            class="todo-checkbox"
-            hx-patch="/shopping/{{ item.id }}"
-            hx-target=".items-container"
-            hx-swap="outerHTML"
-            hx-indicator="#loading"
-            hx-disabled-elt="this"
-            autocomplete="off"
-            value="1"
-            {% if item.completed %} checked {% endif %}
-          />
-        </form>
-      </div>
-       <h6
-         class="shopping-list-item-name {% if item.completed %} completed-list-item {% elif item.is_overdue %} overdue-item {% endif %}"
-       >
-         {{ item.name }}
-       </h6>
+    <div class="container-fluid">
+        {% if items %}
+            {% for item in items %}
+                <div class="list-item {% if item.completed %}disabled{% endif %}">
+                    <div class="list-item-left-action">
+                        <form>
+                            <input type="hidden"
+                                   value="0"
+                                   name="completed"
+                                   {% if not item.completed %}disabled{% endif %} />
+                            <input type="checkbox"
+                                   name="completed"
+                                   class="todo-checkbox"
+                                   hx-patch="/shopping/{{ item.id }}"
+                                   hx-target=".items-container"
+                                   hx-swap="outerHTML"
+                                   hx-indicator="#loading"
+                                   hx-disabled-elt="this"
+                                   autocomplete="off"
+                                   value="1"
+                                   {% if item.completed %}checked{% endif %} />
+                        </form>
+                    </div>
+                    <h6 class="shopping-list-item-name {% if item.completed %} completed-list-item {% elif item.is_overdue %} overdue-item {% endif %}">
+                        {{ item.name }}
+                    </h6>
+                </div>
+            {% endfor %}
+        {% else %}
+            No items
+        {% endif %}
     </div>
-    {% endfor %} {% else %} No tasks for today :D {% endif %}
-  </div>
 </div>
