@@ -1,11 +1,10 @@
 <article>
     <header>
+        <h3>{{ recipe.name }}</h3>
         {% if recipe.url %}
-            <h3>
-                <a href="{{ recipe.url }}" target="_blank">{{ recipe.name }} 🔗</a>
-            </h3>
-        {% else %}
-            <h3>{{ recipe.name }}</h3>
+            <h6>
+                <a href="{{ recipe.url }}">External link 🔗</a>
+            </h6>
         {% endif %}
     </header>
     {% if recipe.description %}{{ recipe.description | safe }}{% endif %}

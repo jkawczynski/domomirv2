@@ -1,42 +1,31 @@
 <div class="grid recipes-grid">
     {% for recipe in recipes %}
         <article>
-            <header>
-                {% if recipe.url %}
-                    <h3>
-                        <a href="{{ recipe.url }}" target="_blank">{{ recipe.name | capitalize }} 🔗</a>
-                    </h3>
+            <header class="card-header">
+                {% if recipe.images %}
+                    <div class="card-img clickable"
+                         style="background-image:url('{{ recipe.images.0.file_name | image_url }}')"
+                         hx-get="/recipes/{{ recipe.id }}"
+                         hx-target="#content-container"
+                         hx-swap="innerHTML"
+                         hx-indicator="#loading"
+                         hx-push-url="true"></div>
                 {% else %}
-                    <h3>{{ recipe.name | capitalize }}</h3>
+                    <div class="card-img clickable"
+                         style="background-image:url('{{ url_for('static', path='imgs/borgir.png') }}')"
+                         hx-get="/recipes/{{ recipe.id }}"
+                         hx-target="#content-container"
+                         hx-swap="innerHTML"
+                         hx-indicator="#loading"
+                         hx-push-url="true"></div>
                 {% endif %}
             </header>
-            {% if recipe.images %}
-                <div class="card-img clickable"
-                     style="background-image:url('{{ recipe.images.0.file_name | image_url }}')"
-                     hx-get="/recipes/{{ recipe.id }}"
-                     hx-target="#content-container"
-                     hx-swap="innerHTML"
-                     hx-indicator="#loading"
-                     hx-push-url="true"></div>
-            {% else %}
-                <div class="card-img clickable"
-                     style="background-image:url('{{ url_for('static', path='imgs/borgir.png') }}')"
-                     hx-get="/recipes/{{ recipe.id }}"
-                     hx-target="#content-container"
-                     hx-swap="innerHTML"
-                     hx-indicator="#loading"
-                     hx-push-url="true"></div>
-            {% endif %}
-            <footer>
-                <div role="group">
-                    <button class="outline"
-                            hx-get="/recipes/{{ recipe.id }}"
-                            hx-target="#content-container"
-                            hx-swap="innerHTML"
-                            hx-indicator="#loading"
-                            hx-push-url="true">Details</button>
-                </div>
-            </footer>
+            <h4 class="clickable"
+                hx-get="/recipes/{{ recipe.id }}"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-push-url="true">{{ recipe.name | capitalize }}</h4>
         </article>
     {% endfor %}
 </div>
