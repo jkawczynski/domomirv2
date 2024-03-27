@@ -23,11 +23,14 @@ class Settings(BaseSettings):
     taskiq: TaskiqSettings = TaskiqSettings()
     database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/domomir"
     echo_db: bool = False
+    app_version: str = "local"
 
     serve_local_images: bool = True
+
+    upload_images_dir: str = "upload/images"
+
+    imagor_url: str = "http://localhost:5555/unsafe"
     local_images_url: str = "/images"
-    local_images_directory_path: str = "upload/images"
-    app_version: str = "local"
 
 
 @lru_cache

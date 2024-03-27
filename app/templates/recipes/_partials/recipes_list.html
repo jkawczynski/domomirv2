@@ -4,7 +4,7 @@
             <header class="card-header">
                 {% if recipe.images %}
                     <div class="card-img clickable"
-                         style="background-image:url('{{ recipe.images.0.file_name | image_url }}')"
+                         style="background-image:url('{{ recipe.images.0.file_name | image_thumbnail }}')"
                          hx-get="/recipes/{{ recipe.id }}"
                          hx-target="#content-container"
                          hx-swap="innerHTML"

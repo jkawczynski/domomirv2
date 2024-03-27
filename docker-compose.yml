@@ -12,7 +12,8 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://domomir@db:5432/domomir?password=pass
       - TASKIQ__BROKER_URL=redis://redis:6379
-      - LOCAL_IMAGES_DIRECTORY_PATH=/upload
+      - SERVE_LOCAL_IMAGES=False
+      - UPLOAD_IMAGES_DIR=/upload
     volumes:
       - upload:/upload
 
@@ -49,6 +50,27 @@ services:
   redis:
     image: redis:latest
     expose: ["6379"]
+
+  imagor:
+    image: shumc/imagor:latest
+    volumes:
+      - upload:/mnt/data
+    environment:
+      PORT: 5555 
+      IMAGOR_UNSAFE: 1 # unsafe URL for testing
+
+      FILE_LOADER_BASE_DIR: /mnt/data # enable file loader by specifying base dir
+
+      FILE_STORAGE_BASE_DIR: /mnt/data # enable file storage by specifying base dir
+      FILE_STORAGE_MKDIR_PERMISSION: 0755 # optional
+      FILE_STORAGE_WRITE_PERMISSION: 0666 # optional
+
+      FILE_RESULT_STORAGE_BASE_DIR: /mnt/data/result # enable file result storage by specifying base dir
+      FILE_RESULT_STORAGE_MKDIR_PERMISSION: 0755 # optional
+      FILE_RESULT_STORAGE_WRITE_PERMISSION: 0666 # optional
+
+    ports:
+      - "5555:5555"
 
 
 volumes:
