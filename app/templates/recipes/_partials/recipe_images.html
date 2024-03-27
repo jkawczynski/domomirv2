@@ -3,8 +3,10 @@
         {% for image in recipe.images %}
             <div class="grid">
                 <article>
-                    <div class="card-img"
-                         style="background-image:url('{{ image.file_name | image_url }}')"></div>
+                    <a href="{{ image.file_name | image_url }}" target="_blank">
+                        <div class="card-img"
+                             style="background-image:url('{{ image.file_name | image_thumbnail }}')"></div>
+                    </a>
                 </article>
             </div>
         {% endfor %}

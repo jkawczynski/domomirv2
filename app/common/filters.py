@@ -21,7 +21,7 @@ def get_image_thumbnail_url(file_name: str) -> str:
         return get_image_url(file_name)
 
     base_url = _get_base_image_url()
-    imagor_filter = "filters:proportion(25)"
+    imagor_filter = "filters:proportion(25):quality(50)"
 
     return f"{base_url}/{imagor_filter}/{file_name}"
 
