@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     imagor_url: str = "http://localhost:5555/unsafe"
     local_images_url: str = "/images"
 
+    external_apps_names: set[str] = set()
+    external_apps_urls: set[str] = set()
+
 
 @lru_cache
 def get_settings():

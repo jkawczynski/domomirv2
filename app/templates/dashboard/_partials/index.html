@@ -1,0 +1,22 @@
+<div class="container-fluid">
+    {% for app in apps %}
+        <div class="dashboard-item">
+            <h3>
+                <a hx-get="{{ app.path }}"
+                   hx-target="#content-container"
+                   hx-swap="innerHTML"
+                   hx-indicator="#loading"
+                   hx-push-url="true"
+                   href="{{ app.path }}">{{ app.emoji_icon }} {{ app.name }}</a>
+            </h3>
+        </div>
+    {% endfor %}
+    <hr />
+    {% for app in external_apps %}
+        <div class="dashboard-item">
+            <h3>
+                <a href="{{ app.url }}" target="_blank">🔗 {{ app.name }}</a>
+            </h3>
+        </div>
+    {% endfor %}
+</div>

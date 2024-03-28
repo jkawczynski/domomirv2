@@ -24,7 +24,7 @@ async def get_tasks_context(session: AsyncSession) -> dict:
     }
 
 
-@router.get("/", response_class=HTMLResponse)
+@router.get("", response_class=HTMLResponse)
 async def get_tasks(request: Request, session: AsyncSession = Depends(get_session)):
     context = await get_tasks_context(session)
     return htmx_utils.template_response(
@@ -36,7 +36,7 @@ async def get_tasks(request: Request, session: AsyncSession = Depends(get_sessio
     )
 
 
-@router.post("/tasks", response_class=HTMLResponse)
+@router.post("", response_class=HTMLResponse)
 async def create_task(
     request: Request,
     form_data: Annotated[dict, Body()],
@@ -66,7 +66,7 @@ async def create_task(
     )
 
 
-@router.patch("/tasks/{task_id}", response_class=HTMLResponse)
+@router.patch("/{task_id}", response_class=HTMLResponse)
 async def update_task(
     request: Request,
     task_id: int,

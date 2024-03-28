@@ -92,3 +92,7 @@
 .card-header {
   padding: 0;
 }
+
+.dashboard-item {
+  padding: 15px 0 15px 0;
+}

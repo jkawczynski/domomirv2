@@ -14,6 +14,8 @@ services:
       - TASKIQ__BROKER_URL=redis://redis:6379
       - SERVE_LOCAL_IMAGES=False
       - UPLOAD_IMAGES_DIR=/upload
+      - EXTERNAL_APPS_NAMES=["Google", "Github"]
+      - EXTERNAL_APPS_URLS=["https://google.com", "https://github.com"]
     volumes:
       - upload:/upload
 

@@ -8,7 +8,8 @@
               href="{{ url_for('static', path='css/pico.fuchsia.min.css') }}" />
         <link rel="stylesheet"
               href="{{ url_for('static', path='css/pico.colors.min.css') }}" />
-        <link rel="stylesheet" href="{{ url_for('static', path='css/app.css').include_query_params(v=app_version) }}" />
+        <link rel="stylesheet"
+              href="{{ url_for('static', path='css/app.css').include_query_params(v=app_version) }}" />
         <script src="{{ url_for('static', path='js/htmx.min.js') }}"></script>
         <script src="{{ url_for('static', path='js/json-enc.js') }}"></script>
         <script src="{{ url_for('static', path='js/response-targets.js') }}"></script>
@@ -23,7 +24,11 @@
             <nav>
                 <ul class="brand">
                     <li>
-                        <strong>Domomir</strong>
+                        <strong hx-get="/"
+                                hx-target="#content-container"
+                                hx-swap="innerHTML"
+                                hx-indicator="#loading"
+                                hx-push-url="true">Domomir</strong>
                     </li>
                 </ul>
                 <ul class="menu">
@@ -36,8 +41,8 @@
                            hx-push-url="true">🐈</a>
                     </li>
                     <li class="item">
-                        <a href="/"
-                           hx-get="/"
+                        <a href="/tasks"
+                           hx-get="/tasks"
                            hx-target="#content-container"
                            hx-swap="innerHTML"
                            hx-indicator="#loading"
