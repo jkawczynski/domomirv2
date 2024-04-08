@@ -1,6 +1,7 @@
 from collections.abc import Iterable, Sequence
 
 from sqlalchemy import delete, func
+from sqlalchemy.orm import joinedload
 from sqlmodel import col, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
@@ -26,7 +27,7 @@ async def get_unfinished_count(session: AsyncSession) -> int:
 
 
 async def get_by_id(session: AsyncSession, task_id: int) -> Task | None:
-    stmt = select(Task).where(Task.id == task_id)
+    stmt = select(Task).options(joinedload(Task.assigned_to)).where(Task.id == task_id)
     result = await session.exec(stmt)
     return result.first()
 
