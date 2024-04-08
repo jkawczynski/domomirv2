@@ -38,6 +38,8 @@ async def create(
     form = forms.ShoppingListItemFormCreate(form_data)
     if not form.is_valid():
         context["errors"] = form.form_errors()
+        base_context = await get_context(session)
+        context.update(base_context)
         return htmx_utils.template_response(
             request=request,
             templates=templates,

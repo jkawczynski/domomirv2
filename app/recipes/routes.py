@@ -24,11 +24,17 @@ async def upload_file(
     files: list[UploadFile],
     session: AsyncSession = Depends(get_session),
 ):
+    form = await request.form()
+    existing_images = await crud.get_images_by_ids(
+        session, images_ids=[int(image_id) for image_id in form.getlist("images")]
+    )
     db_images = await services.upload_and_save_images(session, files)
     context = {
         "errors": {},
-        "recipe": {"ingredients": [{} for i in range(3)]},
-        "images": db_images,
+        "recipe": {
+            "ingredients": [{} for i in range(3)],
+            "images": existing_images + db_images,
+        },
     }
     return htmx_utils.template_response(
         request=request,
@@ -175,4 +181,38 @@ async def recipe_details(
         context={"recipe": recipe},
         partial_template="recipes/_partials/details.html",
         full_template="recipes/details.html",
+    )
+
+
+@router.get("/{recipe_id}/edit", response_class=HTMLResponse)
+async def get_recipe_edit(
+    request: Request,
+    recipe_id: int,
+    session: AsyncSession = Depends(get_session),
+):
+    recipe = await crud.get_by_id(session, recipe_id)
+    context = {"recipe": recipe, "errors": {}}
+    return htmx_utils.template_response(
+        request=request,
+        templates=templates,
+        context=context,
+        partial_template="recipes/_partials/edit.html",
+        full_template="recipes/edit.html",
+    )
+
+
+@router.put("/{recipe_id}", response_class=HTMLResponse)
+async def edit_recipe(
+    request: Request,
+    recipe_id: int,
+    session: AsyncSession = Depends(get_session),
+):
+    recipe = await crud.get_by_id(session, recipe_id)
+    context = {"recipe": recipe, "errors": {}}
+    return htmx_utils.template_response(
+        request=request,
+        templates=templates,
+        context=context,
+        partial_template="recipes/_partials/edit.html",
+        full_template="recipes/edit.html",
     )

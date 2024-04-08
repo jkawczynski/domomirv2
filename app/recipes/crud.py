@@ -60,3 +60,12 @@ async def connect_recipe_with_images(
     )
     await session.exec(stmt)
     await session.commit()
+
+
+async def get_images_by_ids(
+    session: AsyncSession,
+    images_ids: list[int],
+) -> list[RecipeImage]:
+    stmt = select(RecipeImage).where(col(RecipeImage.id).in_(images_ids))
+    result = await session.exec(stmt)
+    return list(result.all())

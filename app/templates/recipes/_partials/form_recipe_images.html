@@ -1,6 +1,6 @@
 <div class="grid recipe-images-container recipes-grid">
-    {% if images %}
-        {% for image in images %}
+    {% if recipe.images %}
+        {% for image in recipe.images %}
             <div id="image-{{ image.id }}">
                 <input type="hidden" name="images" value="{{ image.id }}" />
                 <div class="grid">

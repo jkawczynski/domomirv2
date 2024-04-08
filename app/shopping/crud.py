@@ -8,7 +8,7 @@ from shopping.models import ShoppingListItem
 
 async def get_list(session: AsyncSession) -> Sequence[ShoppingListItem]:
     stmt = select(ShoppingListItem).order_by(
-        col(ShoppingListItem.completed).desc(), col(ShoppingListItem.id)
+        col(ShoppingListItem.completed).desc(), col(ShoppingListItem.id).desc()
     )
     result = await session.exec(stmt)
     return result.all()

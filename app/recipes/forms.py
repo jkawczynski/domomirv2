@@ -14,14 +14,17 @@ class RecipeCreateForm(Form[models.RecipeCreate]):
     def clean(self):
         super().clean()
 
-        amount_and_units = self.form_data.pop("amount_and_unit")
-        ingredients = self.form_data.pop("ingredient")
+        amount_and_units = self.form_data.pop("amount_and_unit", None)
+        ingredients = self.form_data.pop("ingredient", None)
 
-        self.form_data["ingredients"] = [
-            {"name": name, "amount_and_unit": aau}
-            for name, aau in zip(ingredients, amount_and_units, strict=False)
-            if name
-        ]
+        if not amount_and_units or ingredients:
+            self.form_data["ingredients"] = []
+        else:
+            self.form_data["ingredients"] = [
+                {"name": name, "amount_and_unit": aau}
+                for name, aau in zip(ingredients, amount_and_units, strict=False)
+                if name
+            ]
         if "images" in self.form_data:
             if isinstance(self.form_data["images"], list):
                 self.images_ids = [
