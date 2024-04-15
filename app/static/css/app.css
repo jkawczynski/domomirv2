@@ -96,3 +96,13 @@
 .dashboard-item {
   padding: 15px 0 15px 0;
 }
+
+.dashboard-item-icon {
+  padding-right: 15px;
+  padding-botton: 4px;
+}
+
+.menu-item-icon {
+  padding-right: 5px;
+  padding-botton: 4px;
+}

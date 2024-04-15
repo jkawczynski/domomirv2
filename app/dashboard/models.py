@@ -4,7 +4,7 @@ from pydantic import BaseModel
 class AppRoute(BaseModel):
     name: str
     path: str
-    emoji_icon: str
+    icon: str
 
 
 class ExternalAppRoute(BaseModel):

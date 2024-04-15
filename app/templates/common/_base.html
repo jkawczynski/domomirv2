@@ -38,7 +38,10 @@
                            hx-target="#content-container"
                            hx-swap="innerHTML"
                            hx-indicator="#loading"
-                           hx-push-url="true">🐈</a>
+                           hx-push-url="true">
+                            <img class="menu-item-icon"
+                                 src="{{ url_for('static', path='svg/github.svg') }}" />
+                        </a>
                     </li>
                     <li class="item">
                         <a href="/tasks"
@@ -46,7 +49,10 @@
                            hx-target="#content-container"
                            hx-swap="innerHTML"
                            hx-indicator="#loading"
-                           hx-push-url="true">✅ <span class="menu-item-name">Daily tasks</span></a>
+                           hx-push-url="true">
+                            <img class="menu-item-icon"
+                                 src="{{ url_for('static', path='svg/check-square.svg') }}" />
+                            <span class="menu-item-name">Daily tasks</span></a>
                     </li>
                     <li class="item">
                         <a href="/schedules"
@@ -54,7 +60,10 @@
                            hx-target="#content-container"
                            hx-swap="innerHTML"
                            hx-indicator="#loading"
-                           hx-push-url="true">🗓 <span class="menu-item-name">Schedules</span></a>
+                           hx-push-url="true">
+                            <img class="menu-item-icon"
+                                 src="{{ url_for('static', path='svg/calendar.svg') }}" />
+                            <span class="menu-item-name">Schedules</span></a>
                     </li>
                     <li class="item">
                         <a href="/shopping"
@@ -62,7 +71,10 @@
                            hx-target="#content-container"
                            hx-swap="innerHTML"
                            hx-indicator="#loading"
-                           hx-push-url="true">🛒 <span class="menu-item-name">Shopping List</span></a>
+                           hx-push-url="true">
+                            <img class="menu-item-icon"
+                                 src="{{ url_for('static', path='svg/shopping-cart.svg') }}" />
+                            <span class="menu-item-name">Shopping List</span></a>
                     </li>
                     <li class="item">
                         <a href="/recipes"
@@ -70,7 +82,10 @@
                            hx-target="#content-container"
                            hx-swap="innerHTML"
                            hx-indicator="#loading"
-                           hx-push-url="true">🍲 <span class="menu-item-name">Recipes</span></a>
+                           hx-push-url="true">
+                            <img class="menu-item-icon"
+                                 src="{{ url_for('static', path='svg/align-center.svg') }}" />
+                            <span class="menu-item-name">Recipes</span></a>
                     </li>
                 </ul>
             </nav>

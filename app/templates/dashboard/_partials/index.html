@@ -1,22 +1,29 @@
 <div class="container-fluid">
     {% for app in apps %}
         <div class="dashboard-item">
-            <h3>
-                <a hx-get="{{ app.path }}"
+            <h5>
+                <a class="secondary"
+                   hx-get="{{ app.path }}"
                    hx-target="#content-container"
                    hx-swap="innerHTML"
                    hx-indicator="#loading"
                    hx-push-url="true"
-                   href="{{ app.path }}">{{ app.emoji_icon }} {{ app.name }}</a>
-            </h3>
+                   href="{{ app.path }}">
+                    <img class="dashboard-item-icon"
+                         src="{{ url_for('static', path='svg/' + app.icon + '.svg') }}" />
+                {{ app.name }}</a>
+            </h5>
         </div>
     {% endfor %}
     <hr />
     {% for app in external_apps %}
         <div class="dashboard-item">
-            <h3>
-                <a href="{{ app.url }}" target="_blank">🔗 {{ app.name }}</a>
-            </h3>
+            <h5>
+                <a class="secondary" href="{{ app.url }}" target="_blank">
+                    <img class="dashboard-item-icon"
+                         src="{{ url_for('static', path='svg/external-link.svg') }}" />
+                {{ app.name }}</a>
+            </h5>
         </div>
     {% endfor %}
 </div>

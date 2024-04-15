@@ -12,9 +12,9 @@ settings = get_settings()
 router = APIRouter()
 
 apps: list[models.AppRoute] = [
-    models.AppRoute(name="Daily tasks", path="/tasks", emoji_icon="✅"),
-    models.AppRoute(name="Shopping list", path="/shopping", emoji_icon="🛒"),
-    models.AppRoute(name="Recipes", path="/recipes", emoji_icon="🍲"),
+    models.AppRoute(name="Daily tasks", path="/tasks", icon="check-square"),
+    models.AppRoute(name="Shopping list", path="/shopping", icon="shopping-cart"),
+    models.AppRoute(name="Recipes", path="/recipes", icon="align-center"),
 ]
 
 
