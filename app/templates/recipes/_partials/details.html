@@ -18,3 +18,22 @@
 {% if recipe.ingredients %}
     {% include "recipes/_partials/ingredients.html" %}
 {% endif %}
+<article>
+    <header>
+        Actions
+    </header>
+    <div role="group">
+        <button hx-get="/recipes/{{ recipe.id }}/edit"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-push-url="true">Edit</button>
+        <button class="secondary"
+                hx-delete="/recipes/{{ recipe.id }}"
+                hx-confirm="Are you sure you want to delete?"
+                hx-target="#content-container"
+                hx-swap="innerHTML"
+                hx-indicator="#loading"
+                hx-push-url="true">Delete</button>
+    </div>
+</article>

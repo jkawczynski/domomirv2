@@ -17,7 +17,7 @@ class RecipeCreateForm(Form[models.RecipeCreate]):
         amount_and_units = self.form_data.pop("amount_and_unit", None)
         ingredients = self.form_data.pop("ingredient", None)
 
-        if not amount_and_units or ingredients:
+        if not amount_and_units or not ingredients:
             self.form_data["ingredients"] = []
         else:
             self.form_data["ingredients"] = [

@@ -25,6 +25,11 @@
             </span>
         </article>
     {% endif %}
+    {% if action == "deleted" %}
+        <article class="pico-background-red-500">
+            <span>The recipe has been deleted.</span>
+        </article>
+    {% endif %}
     <input type="search"
            id="search"
            name="query"

@@ -4,7 +4,7 @@
     <form>
         {% include "recipes/_partials/form.html" %}
         <button type="submit"
-                hx-post="/recipes/{{ recipe.id }}"
+                hx-put="/recipes/{{ recipe.id }}"
                 hx-target="#content-container"
                 hx-swap="innerHTML show:window:top"
                 hx-indicator="#loading"

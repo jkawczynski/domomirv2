@@ -205,14 +205,71 @@ async def get_recipe_edit(
 async def edit_recipe(
     request: Request,
     recipe_id: int,
+    form_data: Annotated[dict, Body()],
     session: AsyncSession = Depends(get_session),
 ):
+    context = {"recipe": form_data, "errors": {}}
     recipe = await crud.get_by_id(session, recipe_id)
-    context = {"recipe": recipe, "errors": {}}
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    form = forms.RecipeCreateForm(form_data)
+    if not form.is_valid():
+        context["errors"] = form.form_errors()
+        form.add_empty_ingredients()
+        return htmx_utils.template_response(
+            request=request,
+            templates=templates,
+            context=context,
+            partial_template="recipes/_partials/edit.html",
+            full_template="recipes/edit.html",
+        )
+
+    recipe = await services.edit_recipe(
+        session,
+        db_recipe=recipe,
+        validated_recipe=form.validated_model,
+        images_ids=form.images_ids,
+    )
+
+    context = {
+        "action": "edited",
+        "recipe": recipe,
+        **await get_recipes_context(session),
+    }
+    headers = {"HX-Push-Url": "/recipes"}
     return htmx_utils.template_response(
         request=request,
         templates=templates,
         context=context,
-        partial_template="recipes/_partials/edit.html",
-        full_template="recipes/edit.html",
+        headers=headers,
+        partial_template="recipes/_partials/index.html",
+        full_template="recipes/index.html",
+    )
+
+
+@router.delete("/{recipe_id}", response_class=HTMLResponse)
+async def delete_recipe(
+    request: Request,
+    recipe_id: int,
+    session: AsyncSession = Depends(get_session),
+):
+    recipe = await crud.get_by_id(session, recipe_id)
+    if not recipe:
+        raise HTTPException(status_code=404, detail="Recipe not found")
+
+    await crud.delete_recipe(session, recipe)
+
+    context = {
+        "action": "deleted",
+        **await get_recipes_context(session),
+    }
+    headers = {"HX-Push-Url": "/recipes"}
+    return htmx_utils.template_response(
+        request=request,
+        templates=templates,
+        context=context,
+        headers=headers,
+        partial_template="recipes/_partials/index.html",
+        full_template="recipes/index.html",
     )

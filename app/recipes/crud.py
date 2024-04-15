@@ -1,7 +1,7 @@
-from collections.abc import Sequence
+from collections.abc import Iterable, Sequence
 
 from sqlalchemy.orm import joinedload
-from sqlmodel import col, select, update
+from sqlmodel import col, delete, select, update
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from recipes.models import Recipe, RecipeImage, RecipeIngredient
@@ -48,6 +48,18 @@ async def persist(session: AsyncSession, recipe_image: RecipeImage | Recipe):
     return recipe_image
 
 
+async def remove_recipe_ingredients(session: AsyncSession, recipe: Recipe):
+    stmt = delete(RecipeIngredient).where(RecipeIngredient.recipe_id == recipe.id)
+    await session.exec(stmt)
+    await session.commit()
+
+
+async def remove_recipe_images(session: AsyncSession, images_ids: list[int]):
+    stmt = delete(RecipeImage).where(RecipeImage.id.in_(images_ids))
+    await session.exec(stmt)
+    await session.commit()
+
+
 async def connect_recipe_with_images(
     session: AsyncSession,
     recipe: Recipe,
@@ -69,3 +81,23 @@ async def get_images_by_ids(
     stmt = select(RecipeImage).where(col(RecipeImage.id).in_(images_ids))
     result = await session.exec(stmt)
     return list(result.all())
+
+
+async def delete_recipe(session: AsyncSession, recipe: Recipe):
+    await remove_recipe_images(session, [image.id for image in recipe.images])
+    ingredients_stmt = delete(RecipeIngredient).where(
+        RecipeIngredient.recipe_id == recipe.id
+    )
+    await session.exec(ingredients_stmt)
+    await session.commit()
+
+    stmt = delete(Recipe).where(Recipe.id == recipe.id)
+    await session.exec(stmt)
+    await session.commit()
+
+
+async def persist_all(session: AsyncSession, items: Iterable[RecipeIngredient]):
+    for item in items:
+        session.add(item)
+
+    await session.commit()
