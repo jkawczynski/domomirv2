@@ -3,26 +3,28 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
-from sqlmodel.ext.asyncio.session import AsyncSession
 from templates import templates
 
 from common import htmx_utils
-from database import get_session
-from shopping import crud, forms, services
+from shopping import forms
+from shopping.crud import ShoppingListItemCrud
+from shopping.services import ShoppingListItemService
 
 router = APIRouter()
 
 
-async def get_context(session: AsyncSession) -> dict:
-    return {"items": await crud.get_list(session)}
+async def get_context(
+    crud: ShoppingListItemCrud = Depends(ShoppingListItemCrud),
+) -> dict:
+    return {"items": await crud.get_list()}
 
 
 @router.get("", response_class=HTMLResponse)
-async def index(request: Request, session: AsyncSession = Depends(get_session)):
+async def index(request: Request, context: Annotated[dict, Depends(get_context)]):
     return htmx_utils.template_response(
         request=request,
         templates=templates,
-        context=await get_context(session),
+        context=context,
         partial_template="shopping/_partials/index.html",
         full_template="shopping/index.html",
     )
@@ -32,13 +34,14 @@ async def index(request: Request, session: AsyncSession = Depends(get_session)):
 async def create(
     request: Request,
     form_data: Annotated[dict, Body()],
-    session: AsyncSession = Depends(get_session),
+    crud: ShoppingListItemCrud = Depends(ShoppingListItemCrud),
+    service: ShoppingListItemService = Depends(ShoppingListItemService),
 ):
     context = {"item": form_data}
     form = forms.ShoppingListItemFormCreate(form_data)
     if not form.is_valid():
         context["errors"] = form.form_errors()
-        base_context = await get_context(session)
+        base_context = await get_context(crud)
         context.update(base_context)
         return htmx_utils.template_response(
             request=request,
@@ -49,8 +52,8 @@ async def create(
             status_code=400,
         )
 
-    await services.create_shopping_list_item(session, form.validated_model)
-    context = await get_context(session)
+    await service.create_shopping_list_item(form.validated_model)
+    context = await get_context(crud)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -65,7 +68,8 @@ async def update(
     request: Request,
     item_id: int,
     form_data: Annotated[dict, Body()],
-    session: AsyncSession = Depends(get_session),
+    crud: ShoppingListItemCrud = Depends(ShoppingListItemCrud),
+    service: ShoppingListItemService = Depends(ShoppingListItemService),
 ):
     context = {"item": form_data}
     form = forms.ShoppingListItemFormEdit(form_data)
@@ -73,8 +77,8 @@ async def update(
         context["errors"] = form.form_errors()
         raise HTTPException(status_code=500, detail="unhandled")
 
-    await services.update_item(session, item_id, form.validated_model)
-    context = await get_context(session)
+    await service.update_item(item_id, form.validated_model)
+    context = await get_context(crud)
     return htmx_utils.template_response(
         request=request,
         templates=templates,

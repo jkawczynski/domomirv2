@@ -2,19 +2,20 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
-from sqlmodel.ext.asyncio.session import AsyncSession
 from templates import templates
 
 from common import htmx_utils
-from database import get_session
-from recipes import crud, forms, services
+from recipes import forms, services
+from recipes.crud import RecipeCrud, RecipeImageCrud
 from shopping.tasks import add_ingredients_to_shopping_list
 
 router = APIRouter()
 
 
-async def get_recipes_context(session: AsyncSession) -> dict:
-    recipes = await crud.get_list(session)
+async def get_recipes_context(
+    crud: RecipeCrud = Depends(RecipeCrud),
+) -> dict:
+    recipes = await crud.get_list()
     return {"recipes": list(recipes)}
 
 
@@ -22,13 +23,14 @@ async def get_recipes_context(session: AsyncSession) -> dict:
 async def upload_file(
     request: Request,
     files: list[UploadFile],
-    session: AsyncSession = Depends(get_session),
+    crud: RecipeImageCrud = Depends(RecipeImageCrud),
+    service: services.RecipeImageService = Depends(services.RecipeImageService),
 ):
     form = await request.form()
-    existing_images = await crud.get_images_by_ids(
-        session, images_ids=[int(image_id) for image_id in form.getlist("images")]
+    existing_images = await crud.get_list_by_ids(
+        images_ids=[int(image_id) for image_id in form.getlist("images")]
     )
-    db_images = await services.upload_and_save_images(session, files)
+    db_images = await service.upload_and_save_images(files)
     context = {
         "errors": {},
         "recipe": {
@@ -48,12 +50,12 @@ async def upload_file(
 @router.get("", response_class=HTMLResponse)
 async def index(
     request: Request,
-    session: AsyncSession = Depends(get_session),
+    recipes_context: Annotated[dict, Depends(get_recipes_context)],
 ):
     return htmx_utils.template_response(
         request=request,
         templates=templates,
-        context=await get_recipes_context(session),
+        context=recipes_context,
         partial_template="recipes/_partials/index.html",
         full_template="recipes/index.html",
     )
@@ -63,9 +65,9 @@ async def index(
 async def search(
     request: Request,
     query: str | None = None,
-    session: AsyncSession = Depends(get_session),
+    crud: RecipeCrud = Depends(RecipeCrud),
 ):
-    recipes = await crud.get_list(session, query)
+    recipes = await crud.get_list(query)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -118,7 +120,8 @@ async def create(request: Request):
 async def create_recipe(
     request: Request,
     form_data: Annotated[dict, Body()],
-    session: AsyncSession = Depends(get_session),
+    service: services.RecipeService = Depends(services.RecipeService),
+    crud: RecipeCrud = Depends(RecipeCrud),
 ):
     context = {"recipe": form_data, "errors": {}}
     form = forms.RecipeCreateForm(form_data)
@@ -133,17 +136,12 @@ async def create_recipe(
             full_template="recipes/create.html",
         )
 
-    recipe = await services.create_recipe(
-        session,
+    recipe = await service.create_recipe(
         form.validated_model,
         form.images_ids,
     )
 
-    context = {
-        "action": "created",
-        "recipe": recipe,
-        **await get_recipes_context(session),
-    }
+    context = {"action": "created", "recipe": recipe, **await get_recipes_context(crud)}
     headers = {"HX-Push-Url": "/recipes"}
     return htmx_utils.template_response(
         request=request,
@@ -172,9 +170,9 @@ async def create_from_ingredients(
 async def recipe_details(
     request: Request,
     recipe_id: int,
-    session: AsyncSession = Depends(get_session),
+    crud: RecipeCrud = Depends(RecipeCrud),
 ):
-    recipe = await crud.get_by_id(session, recipe_id)
+    recipe = await crud.get_by_id(recipe_id)
     return htmx_utils.template_response(
         request=request,
         templates=templates,
@@ -188,9 +186,9 @@ async def recipe_details(
 async def get_recipe_edit(
     request: Request,
     recipe_id: int,
-    session: AsyncSession = Depends(get_session),
+    crud: RecipeCrud = Depends(RecipeCrud),
 ):
-    recipe = await crud.get_by_id(session, recipe_id)
+    recipe = await crud.get_by_id(recipe_id)
     context = {"recipe": recipe, "errors": {}}
     return htmx_utils.template_response(
         request=request,
@@ -206,10 +204,11 @@ async def edit_recipe(
     request: Request,
     recipe_id: int,
     form_data: Annotated[dict, Body()],
-    session: AsyncSession = Depends(get_session),
+    crud: RecipeCrud = Depends(RecipeCrud),
+    service: services.RecipeService = Depends(services.RecipeService),
 ):
     context = {"recipe": form_data, "errors": {}}
-    recipe = await crud.get_by_id(session, recipe_id)
+    recipe = await crud.get_by_id(recipe_id)
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
 
@@ -225,18 +224,13 @@ async def edit_recipe(
             full_template="recipes/edit.html",
         )
 
-    recipe = await services.edit_recipe(
-        session,
+    recipe = await service.edit_recipe(
         db_recipe=recipe,
         validated_recipe=form.validated_model,
         images_ids=form.images_ids,
     )
 
-    context = {
-        "action": "edited",
-        "recipe": recipe,
-        **await get_recipes_context(session),
-    }
+    context = {"action": "edited", "recipe": recipe, **await get_recipes_context(crud)}
     headers = {"HX-Push-Url": "/recipes"}
     return htmx_utils.template_response(
         request=request,
@@ -252,18 +246,15 @@ async def edit_recipe(
 async def delete_recipe(
     request: Request,
     recipe_id: int,
-    session: AsyncSession = Depends(get_session),
+    crud: RecipeCrud = Depends(RecipeCrud),
 ):
-    recipe = await crud.get_by_id(session, recipe_id)
+    recipe = await crud.get_by_id(recipe_id)
     if not recipe:
         raise HTTPException(status_code=404, detail="Recipe not found")
 
-    await crud.delete_recipe(session, recipe)
+    await crud.delete(recipe)
 
-    context = {
-        "action": "deleted",
-        **await get_recipes_context(session),
-    }
+    context = {"action": "deleted", **await get_recipes_context(crud)}
     headers = {"HX-Push-Url": "/recipes"}
     return htmx_utils.template_response(
         request=request,

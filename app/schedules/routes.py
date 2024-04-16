@@ -2,27 +2,29 @@ from typing import Annotated
 
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi.responses import HTMLResponse
-from sqlmodel.ext.asyncio.session import AsyncSession
 from templates import templates
 
 from common import htmx_utils
-from database import get_session
-from schedules import crud, forms, services
+from schedules import forms
+from schedules.crud import ScheduleCrud
+from schedules.services import ScheduleService
 
 router = APIRouter()
 
 
-async def get_schedules_context(session: AsyncSession) -> dict:
-    return {"schedules": await crud.get_list(session)}
+async def get_schedules_context(crud: ScheduleCrud = Depends(ScheduleCrud)) -> dict:
+    return {"schedules": await crud.get_list()}
 
 
 @router.get("", response_class=HTMLResponse)
-async def get_schedules(request: Request, session: AsyncSession = Depends(get_session)):
-    context = await get_schedules_context(session)
+async def index(
+    request: Request,
+    schedules_context: Annotated[dict, Depends(get_schedules_context)],
+):
     return htmx_utils.template_response(
         request=request,
         templates=templates,
-        context=context,
+        context=schedules_context,
         partial_template="schedules/_partials/index.html",
         full_template="schedules/index.html",
     )
@@ -44,11 +46,11 @@ async def get_create_schedule_form(request: Request):
 async def get_schedule(
     request: Request,
     schedule_id: int,
-    session: AsyncSession = Depends(get_session),
+    crud: ScheduleCrud = Depends(ScheduleCrud),
 ):
     context = {
         "errors": {},
-        "schedule": await crud.get_by_id(session, schedule_id),
+        "schedule": await crud.get_by_id(schedule_id),
         "schedule_id": schedule_id,
     }
     return htmx_utils.template_response(
@@ -64,7 +66,8 @@ async def get_schedule(
 async def create_schedule(
     request: Request,
     form_data: Annotated[dict, Body()],
-    session: AsyncSession = Depends(get_session),
+    crud: ScheduleCrud = Depends(ScheduleCrud),
+    service: ScheduleService = Depends(ScheduleService),
 ):
     context = {"schedule": form_data, "errors": {}}
     form = forms.ScheduleForm(form_data)
@@ -78,12 +81,12 @@ async def create_schedule(
             full_template="schedules/create.html",
         )
 
-    schedule = await services.create_schedule(session, form.validated_model)
+    schedule = await service.create_schedule(form.validated_model)
 
     context = {
         "schedule": schedule,
         "action": "created",
-        **await get_schedules_context(session),
+        **await get_schedules_context(crud),
     }
     headers = {"HX-Push-Url": "/schedules"}
     return htmx_utils.template_response(
@@ -101,7 +104,8 @@ async def edit_schedule(
     request: Request,
     schedule_id: int,
     form_data: Annotated[dict, Body()],
-    session: AsyncSession = Depends(get_session),
+    crud: ScheduleCrud = Depends(ScheduleCrud),
+    service: ScheduleService = Depends(ScheduleService),
 ):
     context = {"schedule_id": schedule_id, "schedule": form_data, "errors": {}}
     form = forms.ScheduleForm(form_data)
@@ -115,8 +119,7 @@ async def edit_schedule(
             full_template="schedules/edit.html",
         )
 
-    schedule = await services.edit_schedule(
-        session=session,
+    schedule = await service.edit_schedule(
         input_schedule=form.validated_model,
         schedule_id=schedule_id,
     )
@@ -124,7 +127,7 @@ async def edit_schedule(
     context = {
         "schedule": schedule,
         "action": "edited",
-        **await get_schedules_context(session),
+        **await get_schedules_context(crud),
     }
     headers = {"HX-Push-Url": "/schedules"}
     return htmx_utils.template_response(

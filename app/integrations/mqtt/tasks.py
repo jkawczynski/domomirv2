@@ -4,7 +4,7 @@ from config import get_settings
 
 from database import get_session
 from integrations.mqtt.client import MQTTClient
-from tasks import crud
+from tasks.crud import TaskCrud
 from tkq import DEFAULT_SCHEDULE_ARGS, broker
 
 logger = logging.getLogger(__name__)
@@ -21,8 +21,9 @@ logger = logging.getLogger(__name__)
 async def send_mqtt_remaining_tasks():
     session_maker = get_session()
     session = await anext(session_maker)
+    crud = TaskCrud(session)
 
-    count = await crud.get_unfinished_count(session)
+    count = await crud.get_unfinished_count()
 
     if count:
         settings = get_settings()
@@ -34,8 +35,9 @@ async def send_mqtt_remaining_tasks():
 async def send_mqtt_task_assigned(task_id: int):
     session_maker = get_session()
     session = await anext(session_maker)
+    crud = TaskCrud(session)
     logger.info(f"sending mqtt msg for assigned task, {task_id=}")
-    task = await crud.get_by_id(session, task_id)
+    task = await crud.get_by_id(task_id)
     if not task:
         return
 

@@ -6,8 +6,9 @@ from rich import print
 from typer import Typer
 
 from database import get_session
-from shopping import crud as shopping_crud
-from users import crud, models
+from shopping.crud import ShoppingListItemCrud
+from users import models
+from users.crud import UserCrud
 
 
 class AsyncTyper(Typer):
@@ -48,13 +49,14 @@ def print_success(msg: str):
 async def create_user(name: str):
     session_maker = get_session()
     session = await anext(session_maker)
-    user = await crud.get_by_name(session, name)
+    crud = UserCrud(session)
+    user = await crud.get_by_name(name)
     if user:
         print_err(f"User with {name=} already exist!")
         return
 
     user = models.User(name=name)
-    await crud.persist(session, user)
+    await crud.persist(user)
 
     print_success(f"Created user with {name=}")
 
@@ -63,7 +65,8 @@ async def create_user(name: str):
 async def clear_shopping():
     session_maker = get_session()
     session = await anext(session_maker)
-    await shopping_crud.remove_all_completed(session)
+    crud = ShoppingListItemCrud(session)
+    await crud.delete_all_completed()
 
 
 if __name__ == "__main__":
