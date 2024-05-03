@@ -6,7 +6,9 @@ from rich import print
 from typer import Typer
 
 from database import get_session
+from schedules.crud import ScheduleCrud
 from shopping.crud import ShoppingListItemCrud
+from tasks.crud import TaskCrud
 from users import models
 from users.crud import UserCrud
 
@@ -67,6 +69,16 @@ async def clear_shopping():
     session = await anext(session_maker)
     crud = ShoppingListItemCrud(session)
     await crud.delete_all_completed()
+
+
+@app.command()
+async def clean_tasks():
+    session_maker = get_session()
+    session = await anext(session_maker)
+    task_crud = TaskCrud(session)
+    schedule_crud = ScheduleCrud(session)
+    await task_crud.delete_all_finished()
+    await schedule_crud.delete_all_finished()
 
 
 if __name__ == "__main__":
